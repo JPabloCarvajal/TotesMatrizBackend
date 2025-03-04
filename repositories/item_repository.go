@@ -66,3 +66,18 @@ func (r *ItemRepository) UpdateItemState(id string, state bool) (*models.Item, e
 	}
 	return &item, nil
 }
+
+func (r *ItemRepository) UpdateItem(item *models.Item) error {
+	// Buscar el item en la base de datos
+	var existingItem models.Item
+	if err := r.DB.First(&existingItem, "id = ?", item.ID).Error; err != nil {
+		return err // Retorna error si no se encuentra
+	}
+
+	// Actualizar el item con los nuevos valores
+	if err := r.DB.Save(item).Error; err != nil {
+		return err // Retorna error si falla la actualización
+	}
+
+	return nil // Éxito
+}

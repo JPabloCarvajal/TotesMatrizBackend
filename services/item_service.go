@@ -32,3 +32,7 @@ func (s *ItemService) SearchItemsByName(query string) ([]models.Item, error) {
 func (s *ItemService) UpdateItemState(id string, state bool) (*models.Item, error) {
 	return s.Repo.UpdateItemState(id, state)
 }
+
+func (s *ItemService) UpdateItem(item *models.Item) error {
+	return s.Repo.UpdateItem(item)
+}

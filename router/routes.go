@@ -20,5 +20,5 @@ func RegisterItemRoutes(router *gin.Engine, controller *controllers.ItemControll
 	router.GET("/item/searchById", controller.SearchItemsByID)
 	router.GET("/item/searchByName", controller.SearchItemsByName)
 	router.PATCH("/item/:id/state", controller.UpdateItemState)
-
+	router.PUT("/item/:id", controller.UpdateItem)
 }

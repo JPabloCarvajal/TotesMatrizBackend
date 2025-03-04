@@ -8,7 +8,7 @@ type Item struct {
 	SellingPrice       float64             `gorm:"not null" json:"selling_price"`
 	PurchasePrice      float64             `gorm:"not null" json:"purchase_price"`
 	ItemState          bool                `gorm:"not null" json:"item_state"`
-	ItemTypeID         string              `gorm:"size:50;not null" json:"-"`
+	ItemTypeID         int                 `gorm:"size:50;not null" json:"-"`
 	ItemType           ItemType            `gorm:"foreignKey:ItemTypeID;references:ID" json:"item_type"`
 	AdditionalExpenses []AdditionalExpense `gorm:"foreignKey:ItemID" json:"additional_expenses"`
 }

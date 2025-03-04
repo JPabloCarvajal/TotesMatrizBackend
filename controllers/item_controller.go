@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -8,6 +9,7 @@ import (
 	"totesbackend/services"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type ItemController struct {
@@ -30,9 +32,9 @@ func (ic *ItemController) GetItemByID(c *gin.Context) {
 		return
 	}
 
-	additionalExpenseIDs := make([]string, len(item.AdditionalExpenses))
+	additionalExpenseIDs := make([]int, len(item.AdditionalExpenses))
 	for i, expense := range item.AdditionalExpenses {
-		additionalExpenseIDs[i] = fmt.Sprintf("%d", expense.ID)
+		additionalExpenseIDs[i] = expense.ID
 	}
 
 	itemDTO := dtos.GetItemDTO{
@@ -62,9 +64,9 @@ func (ic *ItemController) GetAllItems(c *gin.Context) {
 
 	var itemsDTO []dtos.GetItemDTO
 	for _, item := range items {
-		additionalExpenseIDs := make([]string, len(item.AdditionalExpenses))
+		additionalExpenseIDs := make([]int, len(item.AdditionalExpenses))
 		for i, expense := range item.AdditionalExpenses {
-			additionalExpenseIDs[i] = fmt.Sprintf("%d", expense.ID)
+			additionalExpenseIDs[i] = expense.ID
 		}
 
 		itemDTO := dtos.GetItemDTO{
@@ -109,9 +111,9 @@ func (ic *ItemController) SearchItemsByID(c *gin.Context) {
 
 	var itemsDTO []dtos.GetItemDTO
 	for _, item := range items {
-		additionalExpenseIDs := make([]string, len(item.AdditionalExpenses))
+		additionalExpenseIDs := make([]int, len(item.AdditionalExpenses))
 		for i, expense := range item.AdditionalExpenses {
-			additionalExpenseIDs[i] = fmt.Sprintf("%d", expense.ID)
+			additionalExpenseIDs[i] = expense.ID
 		}
 
 		itemDTO := dtos.GetItemDTO{
@@ -156,9 +158,9 @@ func (ic *ItemController) SearchItemsByName(c *gin.Context) {
 
 	var itemsDTO []dtos.GetItemDTO
 	for _, item := range items {
-		additionalExpenseIDs := make([]string, len(item.AdditionalExpenses))
+		additionalExpenseIDs := make([]int, len(item.AdditionalExpenses))
 		for i, expense := range item.AdditionalExpenses {
-			additionalExpenseIDs[i] = fmt.Sprintf("%d", expense.ID)
+			additionalExpenseIDs[i] = expense.ID
 		}
 
 		itemDTO := dtos.GetItemDTO{
@@ -200,9 +202,9 @@ func (ic *ItemController) UpdateItemState(c *gin.Context) {
 		return
 	}
 
-	additionalExpenseIDs := make([]string, len(item.AdditionalExpenses))
+	additionalExpenseIDs := make([]int, len(item.AdditionalExpenses))
 	for i, expense := range item.AdditionalExpenses {
-		additionalExpenseIDs[i] = fmt.Sprintf("%d", expense.ID)
+		additionalExpenseIDs[i] = expense.ID
 	}
 
 	itemDTO := dtos.GetItemDTO{
@@ -219,4 +221,43 @@ func (ic *ItemController) UpdateItemState(c *gin.Context) {
 
 	c.JSON(http.StatusOK, itemDTO)
 
+}
+
+func (ic *ItemController) UpdateItem(c *gin.Context) {
+	id := c.Param("id") // Obtener el ID del item
+
+	var dto dtos.UpdateItemDTO
+	if err := c.ShouldBindJSON(&dto); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format"})
+		return
+	}
+
+	// Buscar el item en la base de datos
+	item, err := ic.Service.GetItemByID(id)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Item not found"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving item"})
+		return
+	}
+
+	// Asignar los valores del DTO al modelo
+	item.Name = dto.Name
+	item.Description = dto.Description
+	item.Stock = dto.Stock
+	item.SellingPrice = dto.SellingPrice
+	item.PurchasePrice = dto.PurchasePrice
+	item.ItemState = dto.ItemState
+	item.ItemTypeID = dto.ItemTypeID
+
+	// Llamar al servicio para actualizar el item
+	err = ic.Service.UpdateItem(item)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error updating item"})
+		return
+	}
+
+	c.JSON(http.StatusOK, dto)
 }
