@@ -46,9 +46,9 @@ func RegisterUserTypeRoutes(router *gin.Engine, controller *controllers.UserType
 		userTypes.GET("/", controller.ObtainAllUserTypes)
 		userTypes.GET("/:id", controller.ObtainUserTypeByID)
 		userTypes.GET("/:id/exists", controller.Exists)
-
+	}
 }
-  
+
 func RegisterUserStateTypeRoutes(router *gin.Engine, controller *controllers.UserStateTypeController) {
 	router.GET("/user-state-type", controller.GetUserStateTypes)
 	router.GET("/user-state-type/:id", controller.GetUserStateTypeByID)
