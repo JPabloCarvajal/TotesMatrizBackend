@@ -22,3 +22,13 @@ func RegisterItemRoutes(router *gin.Engine, controller *controllers.ItemControll
 	router.PATCH("/item/:id/state", controller.UpdateItemState)
 	router.PUT("/item/:id", controller.UpdateItem)
 }
+
+func RegisterUserStateTypeRoutes(router *gin.Engine, controller *controllers.UserStateTypeController) {
+	router.GET("/user-state-type", controller.GetUserStateTypes)
+	router.GET("/user-state-type/:id", controller.GetUserStateTypeByID)
+}
+
+func RegisterIdentifierTypeRoutes(router *gin.Engine, controller *controllers.IdentifierTypeController) {
+	router.GET("/identifier-type", controller.GetIdentifierTypes)
+	router.GET("/identifier-type/:id", controller.GetIdentifierTypeByID)
+}
