@@ -37,10 +37,26 @@ func SetupAndRunApp() error {
 
 	setUpItemTypeRouter()
 	setUpItemRouter()
+	setUpPermissionRouter()
+	setUpRoleRouter()
+	setUpUserTypeRouter()
 
 	router.Run("localhost:8080")
 
 	return nil
+}
+func setUpPermissionRouter() {
+	permissionRepo := repositories.NewPermissionRepository(db)
+	permissionService := services.NewPermissionService(permissionRepo)
+	permissionController := controllers.NewPermissionController(permissionService)
+	routes.RegisterPermissionRoutes(router, permissionController)
+}
+
+func setUpRoleRouter() {
+	roleRepo := repositories.NewRoleRepository(db)
+	roleService := services.NewRoleService(roleRepo)
+	roleController := controllers.NewRoleController(roleService)
+	routes.RegisterRoleRoutes(router, roleController)
 }
 
 func setUpItemTypeRouter() {
@@ -48,6 +64,13 @@ func setUpItemTypeRouter() {
 	itemTypeService := services.NewItemTypeService(itemTypeRepo)
 	itemTypeController := controllers.NewItemTypeController(itemTypeService)
 	routes.RegisterItemTypeRoutes(router, itemTypeController)
+}
+
+func setUpUserTypeRouter() {
+	userTypeRepo := repositories.NewUserTypeRepository(db)
+	userTypeService := services.NewUserTypeService(userTypeRepo)
+	userTypeController := controllers.NewUserTypeController(userTypeService)
+	routes.RegisterUserTypeRoutes(router, userTypeController)
 }
 
 func setUpItemRouter() {

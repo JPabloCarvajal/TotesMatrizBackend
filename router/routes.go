@@ -22,3 +22,30 @@ func RegisterItemRoutes(router *gin.Engine, controller *controllers.ItemControll
 	router.PATCH("/item/:id/state", controller.UpdateItemState)
 	router.PUT("/item/:id", controller.UpdateItem)
 }
+
+func RegisterPermissionRoutes(router *gin.Engine, controller *controllers.PermissionController) {
+	permissions := router.Group("/permissions")
+	{
+		permissions.GET("/", controller.GetAllPermissions)    //sirve
+		permissions.GET("/:id", controller.GetPermissionByID) //sirve
+	}
+}
+
+func RegisterRoleRoutes(router *gin.Engine, controller *controllers.RoleController) {
+	roles := router.Group("/roles")
+	{
+		roles.GET("/:id", controller.GetRoleByID)                         // sirve
+		roles.GET("/:id/permissions", controller.GetAllPermissionsOfRole) // sirve
+		roles.GET("/:id/exists", controller.ExistRole)                    // sirve
+	}
+}
+
+func RegisterUserTypeRoutes(router *gin.Engine, controller *controllers.UserTypeController) {
+	userTypes := router.Group("/user-types")
+	{
+		userTypes.GET("/", controller.ObtainAllUserTypes)
+		userTypes.GET("/:id", controller.ObtainUserTypeByID)
+		userTypes.GET("/:id/exists", controller.Exists)
+
+	}
+}
