@@ -37,6 +37,8 @@ func SetupAndRunApp() error {
 
 	setUpItemTypeRouter()
 	setUpItemRouter()
+	setUpIdentifierTypeRouter()
+	setUpUserStateTypeRouter()
 
 	router.Run("localhost:8080")
 
@@ -55,4 +57,18 @@ func setUpItemRouter() {
 	itemService := services.NewItemService(itemRepo)
 	itemController := controllers.NewItemController(itemService)
 	routes.RegisterItemRoutes(router, itemController)
+}
+
+func setUpUserStateTypeRouter() {
+	userStateTypeRepo := repositories.NewUserStateTypeRepository(db)
+	userStateTypeService := services.NewUserStateTypeService(userStateTypeRepo)
+	userStateTypeController := controllers.NewUserStateTypeController(userStateTypeService)
+	routes.RegisterUserStateTypeRoutes(router, userStateTypeController)
+}
+
+func setUpIdentifierTypeRouter() {
+	identifierTypeRepo := repositories.NewIdentifierTypeRepository(db)
+	identifierTypeService := services.NewIdentifierTypeService(identifierTypeRepo)
+	identifierTypeController := controllers.NewIdentifierTypeController(identifierTypeService)
+	routes.RegisterIdentifierTypeRoutes(router, identifierTypeController)
 }
