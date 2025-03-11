@@ -21,15 +21,16 @@ func RegisterItemRoutes(router *gin.Engine, controller *controllers.ItemControll
 }
 
 func RegisterPermissionRoutes(router *gin.Engine, controller *controllers.PermissionController) {
+
 	router.GET("/permission", controller.GetAllPermissions)
 	router.GET("/permission/:id", controller.GetPermissionByID)
+
 }
 
-// //
 func RegisterRoleRoutes(router *gin.Engine, controller *controllers.RoleController) {
 	router.GET("/roles/:id", controller.GetRoleByID)
-	router.GET("/roles/:id/permissions", controller.GetAllPermissionsOfRole)
-	router.GET("/roles/:id/exists", controller.ExistRole)
+	router.GET("/roles/:id/permission", controller.GetAllPermissionsOfRole)
+	router.GET("/roles/:id/exist", controller.ExistRole)
 	router.GET("/roles/", controller.GetAllRoles)
 }
 
@@ -62,8 +63,10 @@ func RegisterUserRoutes(router *gin.Engine, controller *controllers.UserControll
 func RegisterEmployeeRoutes(router *gin.Engine, controller *controllers.EmployeeController) {
 	router.GET("/employee/", controller.GetAllEmployees)
 	router.GET("/employee/:id", controller.GetEmployeeByID)
+
 	router.GET("/employee/searchEmployeesByName", controller.SearchEmployeesByName)
 	router.POST("/employee/", controller.CreateEmployee)
 	router.PUT("/employee/:id", controller.UpdateEmployee)
 	router.DELETE("/employee/:id", controller.DeleteEmployee)
+
 }
