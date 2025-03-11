@@ -30,10 +30,6 @@ func (s *EmployeeService) UpdateEmployee(id string, employeeDTO dtos.UpdateEmplo
 	return s.Repo.UpdateEmployee(id, employeeDTO)
 }
 
-func (s *EmployeeService) CreateEmployee(employeeDTO dtos.UpdateEmployeeDTO) (*models.Employee, error) {
-	return s.Repo.CreateEmployee(employeeDTO)
-}
-
-func (s *EmployeeService) DeleteEmployeeById(id string) error {
-	return s.Repo.DeleteEmployeeById(id)
+func (s *EmployeeService) CreateEmployee(employee models.Employee) (*models.Employee, error) {
+	return s.Repo.CreateEmployee(employee)
 }
