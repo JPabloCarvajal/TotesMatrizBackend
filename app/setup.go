@@ -45,6 +45,7 @@ func SetupAndRunApp() error {
 	setUpUserStateTypeRouter()
 	setUpEmployeeRouter()
 	setUpAdditionalExpenseRouter()
+	setUpHistoricalItemPriceRouter()
 
 	router.Run("localhost:8080")
 
@@ -118,4 +119,11 @@ func setUpAdditionalExpenseRouter() {
 	addService := services.NewAdditionalExpenseService(addRepo)
 	addController := controllers.NewAdditionalExpenseController(addService)
 	routes.RegisterAdditionalExpenseRoutes(router, addController)
+}
+
+func setUpHistoricalItemPriceRouter() {
+	hisRepo := repositories.NewHistoricalItemPriceRepository(db)
+	hisService := services.NewHistoricalItemPriceService(hisRepo)
+	hisController := controllers.NewHistoricalItemPriceController(hisService)
+	routes.RegisterHistoricalItemPriceRoutes(router, hisController)
 }

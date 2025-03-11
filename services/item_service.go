@@ -1,6 +1,7 @@
 package services
 
 import (
+	"time"
 	"totesbackend/models"
 	"totesbackend/repositories"
 )
@@ -34,7 +35,27 @@ func (s *ItemService) UpdateItemState(id string, state bool) (*models.Item, erro
 }
 
 func (s *ItemService) UpdateItem(item *models.Item) error {
-	return s.Repo.UpdateItem(item)
+	hisRepo := repositories.NewHistoricalItemPriceRepository(s.Repo.DB)
+
+	SellingPriceChanged, err := s.Repo.UpdateItem(item)
+	if err != nil {
+		return err
+	}
+
+	if !SellingPriceChanged {
+		return nil
+	}
+
+	historicalPrice := models.HistoricalItemPrice{
+		ItemID:     item.ID,
+		Price:      item.SellingPrice,
+		ModifiedAt: time.Now(),
+	}
+
+	if err := hisRepo.CreateHistoricalItemPrice(&historicalPrice); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *ItemService) CreateItem(item *models.Item) (*models.Item, error) {

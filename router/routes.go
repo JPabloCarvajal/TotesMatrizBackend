@@ -80,3 +80,7 @@ func RegisterAdditionalExpenseRoutes(router *gin.Engine, controller *controllers
 	router.PUT("/additional-expense/:id", controller.UpdateAdditionalExpense)
 	router.DELETE("/additional-expense/:id", controller.DeleteAdditionalExpense)
 }
+
+func RegisterHistoricalItemPriceRoutes(router *gin.Engine, controller *controllers.HistoricalItemPriceController) {
+	router.GET("/historical-item-price/:id", controller.GetHistoricalItemPrice)
+}

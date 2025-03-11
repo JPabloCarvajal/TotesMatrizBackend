@@ -62,7 +62,9 @@ func ClosePostgres() {
 
 func MigrateDB() {
 
-	err := db.AutoMigrate(&models.Item{}, &models.ItemType{}, &models.AdditionalExpense{}, &models.Permission{}, &models.Role{}, &models.UserType{}, &models.IdentifierType{}, &models.UserStateType{}, &models.Employee{})
+	err := db.AutoMigrate(&models.Item{}, &models.ItemType{},
+		&models.AdditionalExpense{}, &models.Permission{}, &models.Role{},
+		&models.UserType{}, &models.IdentifierType{}, &models.UserStateType{}, &models.Employee{}, &models.HistoricalItemPrice{})
 	if err != nil {
 		log.Fatal("Error en la migración de la base de datos:", err)
 	}

@@ -67,19 +67,20 @@ func (r *ItemRepository) UpdateItemState(id string, state bool) (*models.Item, e
 	return &item, nil
 }
 
-func (r *ItemRepository) UpdateItem(item *models.Item) error {
-	// Buscar el item en la base de datos
+func (r *ItemRepository) UpdateItem(item *models.Item) (bool, error) {
+
 	var existingItem models.Item
 	if err := r.DB.Preload("ItemType").Preload("AdditionalExpenses").First(&existingItem, "id = ?", item.ID).Error; err != nil {
-		return err // Retorna error si no se encuentra
+		return false, err
 	}
 
-	// Actualizar el item con los nuevos valores
+	priceChanged := existingItem.SellingPrice != item.SellingPrice
+
 	if err := r.DB.Save(item).Error; err != nil {
-		return err // Retorna error si falla la actualización
+		return false, err
 	}
 
-	return nil // Éxito
+	return priceChanged, nil
 }
 
 func (r *ItemRepository) CreateItem(item *models.Item) (*models.Item, error) {
