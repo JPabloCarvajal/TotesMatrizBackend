@@ -61,7 +61,7 @@ func RegisterUserRoutes(router *gin.Engine, controller *controllers.UserControll
 func RegisterEmployeeRoutes(router *gin.Engine, controller *controllers.EmployeeController) {
 	router.GET("/employees/", controller.GetAllEmployees)
 	router.GET("/employees/:id", controller.GetEmployeeByID)
-	router.GET("/employees/search", controller.SearchEmployeesByName)
+	router.GET("/employees/searchEmployeesByName", controller.SearchEmployeesByName)
 	router.POST("/employees/", controller.CreateEmployee)
 	router.PUT("/employees/:id", controller.UpdateEmployee)
 	router.DELETE("/employees/:id", controller.DeleteEmployee)
