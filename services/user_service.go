@@ -17,6 +17,10 @@ func (s *UserService) GetUserByID(id string) (*models.User, error) {
 	return s.Repo.GetUserByID(id)
 }
 
+func (s *UserService) GetUserByEmail(email string) (*models.User, error) {
+	return s.Repo.GetUserByEmail(email)
+}
+
 func (s *UserService) GetAllUsers() ([]models.User, error) {
 	return s.Repo.GetAllUsers()
 }
@@ -35,4 +39,8 @@ func (s *UserService) UpdateUserState(id string, state int) (*models.User, error
 
 func (s *UserService) UpdateUser(user *models.User) error {
 	return s.Repo.UpdateUser(user)
+}
+
+func (s *UserService) CreateUser(user *models.User) (*models.User, error) {
+	return s.Repo.CreateUser(user)
 }

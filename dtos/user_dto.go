@@ -16,3 +16,11 @@ type UpdateUserDTO struct {
 	UserTypeID  int    `json:"user_type"`
 	UserStateID int    `json:"user_state"`
 }
+
+type CreateUserDTO struct {
+	Email       string `json:"email"`
+	Password    string `json:"password"`
+	Token       string `json:"token"`
+	UserTypeID  int    `json:"user_type_id"`
+	UserStateID int    `json:"user_state_id"`
+}
