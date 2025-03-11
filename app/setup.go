@@ -33,7 +33,7 @@ func SetupAndRunApp() error {
 
 	db = database.GetDB()
 	router = gin.Default()
-	//database.MigrateDB() //recordar descomentar para inicializar la base de datos
+	database.MigrateDB() //recordar descomentar para inicializar la base de datos
 
 	setUpUserRouter()
 	setUpItemTypeRouter()
@@ -44,6 +44,7 @@ func SetupAndRunApp() error {
 	setUpIdentifierTypeRouter()
 	setUpUserStateTypeRouter()
 	setUpEmployeeRouter()
+	setUpAdditionalExpenseRouter()
 
 	router.Run("localhost:8080")
 
@@ -110,4 +111,11 @@ func setUpUserRouter() {
 	userService := services.NewUserService(userRepo)
 	userController := controllers.NewUserController(userService)
 	routes.RegisterUserRoutes(router, userController)
+}
+
+func setUpAdditionalExpenseRouter() {
+	addRepo := repositories.NewAdditionalExpenseRepository(db)
+	addService := services.NewAdditionalExpenseService(addRepo)
+	addController := controllers.NewAdditionalExpenseController(addService)
+	routes.RegisterAdditionalExpenseRoutes(router, addController)
 }

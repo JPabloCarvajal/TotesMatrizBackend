@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"totesbackend/dtos"
+	"totesbackend/models"
 	"totesbackend/services"
 
 	"github.com/gin-gonic/gin"
@@ -259,5 +260,53 @@ func (ic *ItemController) UpdateItem(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dto)
+	var dtoGet dtos.GetItemDTO
+	dtoGet.ID = item.ID
+	dtoGet.Name = item.Name
+	dtoGet.Description = item.Description
+	dtoGet.Stock = item.Stock
+	dtoGet.SellingPrice = item.SellingPrice
+	dtoGet.PurchasePrice = item.PurchasePrice
+	dtoGet.ItemState = item.ItemState
+	dtoGet.ItemTypeID = item.ItemTypeID
+
+	c.JSON(http.StatusOK, dtoGet)
+}
+
+func (ic *ItemController) CreateItem(c *gin.Context) {
+	var dto dtos.UpdateItemDTO
+	if err := c.ShouldBindJSON(&dto); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format"})
+		return
+	}
+
+	// Crear una instancia del modelo Item con los datos del DTO
+	item := models.Item{
+		Name:          dto.Name,
+		Description:   dto.Description,
+		Stock:         dto.Stock,
+		SellingPrice:  dto.SellingPrice,
+		PurchasePrice: dto.PurchasePrice,
+		ItemState:     dto.ItemState,
+		ItemTypeID:    dto.ItemTypeID,
+	}
+
+	// Llamar al servicio para crear el item
+	itemWithId, err := ic.Service.CreateItem(&item)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating item"})
+		return
+	}
+
+	var dtoGet dtos.GetItemDTO
+	dtoGet.ID = itemWithId.ID
+	dtoGet.Name = itemWithId.Name
+	dtoGet.Description = itemWithId.Description
+	dtoGet.Stock = itemWithId.Stock
+	dtoGet.SellingPrice = itemWithId.SellingPrice
+	dtoGet.PurchasePrice = itemWithId.PurchasePrice
+	dtoGet.ItemState = itemWithId.ItemState
+	dtoGet.ItemTypeID = itemWithId.ItemTypeID
+
+	c.JSON(http.StatusCreated, dtoGet)
 }

@@ -70,7 +70,7 @@ func (r *ItemRepository) UpdateItemState(id string, state bool) (*models.Item, e
 func (r *ItemRepository) UpdateItem(item *models.Item) error {
 	// Buscar el item en la base de datos
 	var existingItem models.Item
-	if err := r.DB.First(&existingItem, "id = ?", item.ID).Error; err != nil {
+	if err := r.DB.Preload("ItemType").Preload("AdditionalExpenses").First(&existingItem, "id = ?", item.ID).Error; err != nil {
 		return err // Retorna error si no se encuentra
 	}
 
@@ -80,4 +80,12 @@ func (r *ItemRepository) UpdateItem(item *models.Item) error {
 	}
 
 	return nil // Éxito
+}
+
+func (r *ItemRepository) CreateItem(item *models.Item) (*models.Item, error) {
+
+	if err := r.DB.Create(item).Error; err != nil {
+		return nil, err
+	}
+	return item, nil
 }

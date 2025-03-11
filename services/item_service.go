@@ -36,3 +36,7 @@ func (s *ItemService) UpdateItemState(id string, state bool) (*models.Item, erro
 func (s *ItemService) UpdateItem(item *models.Item) error {
 	return s.Repo.UpdateItem(item)
 }
+
+func (s *ItemService) CreateItem(item *models.Item) (*models.Item, error) {
+	return s.Repo.CreateItem(item)
+}

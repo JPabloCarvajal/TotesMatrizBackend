@@ -18,23 +18,23 @@ func RegisterItemRoutes(router *gin.Engine, controller *controllers.ItemControll
 	router.GET("/item/searchByName", controller.SearchItemsByName)
 	router.PATCH("/item/:id/state", controller.UpdateItemState)
 	router.PUT("/item/:id", controller.UpdateItem)
+	router.POST("/item", controller.CreateItem)
 }
 
 func RegisterPermissionRoutes(router *gin.Engine, controller *controllers.PermissionController) {
-	router.GET("/permissions/", controller.GetAllPermissions)
+	router.GET("/permissions", controller.GetAllPermissions)
 	router.GET("/permissions/:id", controller.GetPermissionByID)
 }
 
-// //
 func RegisterRoleRoutes(router *gin.Engine, controller *controllers.RoleController) {
 	router.GET("/roles/:id", controller.GetRoleByID)
 	router.GET("/roles/:id/permissions", controller.GetAllPermissionsOfRole)
 	router.GET("/roles/:id/exists", controller.ExistRole)
-	router.GET("/roles/", controller.GetAllRoles)
+	router.GET("/roles", controller.GetAllRoles)
 }
 
 func RegisterUserTypeRoutes(router *gin.Engine, controller *controllers.UserTypeController) {
-	router.GET("/user-types/", controller.ObtainAllUserTypes)
+	router.GET("/user-types", controller.ObtainAllUserTypes)
 	router.GET("/user-types/:id", controller.ObtainUserTypeByID)
 	router.GET("/user-types/:id/exists", controller.Exists)
 }
@@ -59,10 +59,18 @@ func RegisterUserRoutes(router *gin.Engine, controller *controllers.UserControll
 }
 
 func RegisterEmployeeRoutes(router *gin.Engine, controller *controllers.EmployeeController) {
-	router.GET("/employees/", controller.GetAllEmployees)
+	router.GET("/employees", controller.GetAllEmployees)
 	router.GET("/employees/:id", controller.GetEmployeeByID)
 	router.GET("/employees/searchEmployeesByName", controller.SearchEmployeesByName)
 	router.POST("/employees/", controller.CreateEmployee)
 	router.PUT("/employees/:id", controller.UpdateEmployee)
 	router.DELETE("/employees/:id", controller.DeleteEmployee)
+}
+
+func RegisterAdditionalExpenseRoutes(router *gin.Engine, controller *controllers.AdditionalExpenseController) {
+	router.GET("/additional-expense", controller.GetAllAdditionalExpenses)
+	router.GET("/additional-expense/:id", controller.GetAdditionalExpenseByID)
+	router.POST("/additional-expense", controller.CreateAdditionalExpense)
+	router.PUT("/additional-expense/:id", controller.UpdateAdditionalExpense)
+	router.DELETE("/additional-expense/:id", controller.DeleteAdditionalExpense)
 }
