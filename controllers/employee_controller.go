@@ -166,33 +166,50 @@ func (ec *EmployeeController) CreateEmployee(c *gin.Context) {
 }
 
 func (ec *EmployeeController) UpdateEmployee(c *gin.Context) {
+	username := c.GetHeader("Username")
+	fmt.Println("Request made by user:", username)
+
 	id := c.Param("id")
 
 	var dto dtos.UpdateEmployeeDTO
 	if err := c.ShouldBindJSON(&dto); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	employee, err := ec.Service.UpdateEmployee(id, dto)
+	employee, err := ec.Service.SearchEmployeeByID(id)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Employee not found"})
 			return
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error updating employee"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		return
 	}
 
-	employeeDTO := dtos.UpdateEmployeeDTO{
-		Names:            employee.Names,
-		LastNames:        employee.LastNames,
-		PersonalID:       employee.PersonalID,
-		Address:          employee.Address,
-		PhoneNumbers:     employee.PhoneNumbers,
-		UserID:           employee.UserID,
-		IdentifierTypeID: employee.IdentifierTypeID,
+	employee.Names = dto.Names
+	employee.LastNames = dto.LastNames
+	employee.PersonalID = dto.PersonalID
+	employee.Address = dto.Address
+	employee.PhoneNumbers = dto.PhoneNumbers
+	employee.UserID = dto.UserID
+	employee.IdentifierTypeID = dto.IdentifierTypeID
+
+	err = ec.Service.UpdateEmployee(employee)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		return
 	}
 
-	c.JSON(http.StatusOK, employeeDTO)
+	var dtoEmployee dtos.GetEmployeeDTO
+	dtoEmployee.ID = employee.ID
+	dtoEmployee.Names = employee.Names
+	dtoEmployee.LastNames = employee.LastNames
+	dtoEmployee.PersonalID = employee.PersonalID
+	dtoEmployee.Address = employee.Address
+	dtoEmployee.PhoneNumbers = employee.PhoneNumbers
+	dtoEmployee.UserID = employee.UserID
+	dtoEmployee.IdentifierTypeID = employee.IdentifierTypeID
+
+	c.JSON(http.StatusOK, dtoEmployee)
 }
