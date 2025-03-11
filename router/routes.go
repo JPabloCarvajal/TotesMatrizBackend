@@ -52,8 +52,8 @@ func RegisterIdentifierTypeRoutes(router *gin.Engine, controller *controllers.Id
 func RegisterUserRoutes(router *gin.Engine, controller *controllers.UserController) {
 	router.GET("/users", controller.GetAllUsers)
 	router.GET("/users/:id", controller.GetUserByID)
-	router.GET("/users/:id/exists", controller.SearchUsersByID)
-	router.GET("/users/search", controller.SearchUsersByEmail)
+	router.GET("/users/searchByID", controller.SearchUsersByID)
+	router.GET("/users/searchByEmail", controller.SearchUsersByEmail)
 	router.PATCH("/users/:id/state", controller.UpdateUserState)
 	router.PUT("/users/:id", controller.UpdateUser)
 }

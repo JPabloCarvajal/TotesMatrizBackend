@@ -76,7 +76,7 @@ func (uc *UserController) SearchUsersByID(c *gin.Context) {
 	username := c.GetHeader("Username")
 	fmt.Println("Request made by user:", username)
 
-	query := c.Query("query")
+	query := c.Query("id")
 
 	if query == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Query parameter is required"})
@@ -115,7 +115,7 @@ func (uc *UserController) SearchUsersByEmail(c *gin.Context) {
 	username := c.GetHeader("Username")
 	fmt.Println("Request made by user:", username)
 
-	query := c.Query("query")
+	query := c.Query("email")
 
 	if query == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Query parameter is required"})
