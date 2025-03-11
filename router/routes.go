@@ -84,3 +84,11 @@ func RegisterAdditionalExpenseRoutes(router *gin.Engine, controller *controllers
 func RegisterHistoricalItemPriceRoutes(router *gin.Engine, controller *controllers.HistoricalItemPriceController) {
 	router.GET("/historical-item-price/:id", controller.GetHistoricalItemPrice)
 }
+
+func RegisterCommentRoutes(router *gin.Engine, controller *controllers.CommentController) {
+	router.GET("/comment/:id", controller.GetCommentByID)
+	router.GET("/comments", controller.GetAllComments)
+	router.GET("/comments/searchByEmail", controller.SearchCommentsByEmail)
+	router.POST("/comment", controller.CreateComment)
+	router.PUT("/comment/:id", controller.UpdateComment)
+}

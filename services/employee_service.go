@@ -1,7 +1,6 @@
 package services
 
 import (
-	"totesbackend/dtos"
 	"totesbackend/models"
 	"totesbackend/repositories"
 )
@@ -26,8 +25,8 @@ func (s *EmployeeService) GetAllEmployees() ([]models.Employee, error) {
 	return s.Repo.GetAllEmployees()
 }
 
-func (s *EmployeeService) UpdateEmployee(id string, employeeDTO dtos.UpdateEmployeeDTO) (*models.Employee, error) {
-	return s.Repo.UpdateEmployee(id, employeeDTO)
+func (s *EmployeeService) UpdateEmployee(employee *models.Employee) error {
+	return s.Repo.UpdateUser(employee)
 }
 
 func (s *EmployeeService) CreateEmployee(employee models.Employee) (*models.Employee, error) {

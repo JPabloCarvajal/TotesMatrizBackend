@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"totesbackend/dtos"
 	"totesbackend/models"
 
 	"gorm.io/gorm"
@@ -44,25 +43,12 @@ func (r *EmployeeRepository) GetAllEmployees() ([]models.Employee, error) {
 	return employees, nil
 }
 
-func (r *EmployeeRepository) UpdateEmployee(id string, employeeDTO dtos.UpdateEmployeeDTO) (*models.Employee, error) {
-	var employee models.Employee
-	err := r.DB.First(&employee, "id = ?", id).Error
-	if err != nil {
-		return nil, err
+func (r *EmployeeRepository) UpdateUser(user *models.Employee) error {
+	var existingUser models.User
+	if err := r.DB.Preload("UserStateType").Preload("UserType").First(&existingUser, "id = ?", user.ID).Error; err != nil {
+		return err
 	}
-
-	employee.Names = employeeDTO.Names
-	employee.LastNames = employeeDTO.LastNames
-	employee.PersonalID = employeeDTO.PersonalID
-	employee.Address = employeeDTO.Address
-	employee.PhoneNumbers = employeeDTO.PhoneNumbers
-	employee.UserID = employeeDTO.UserID
-	employee.IdentifierTypeID = employeeDTO.IdentifierTypeID
-
-	if err := r.DB.Save(&employee).Error; err != nil {
-		return nil, err
-	}
-	return &employee, nil
+	return nil
 }
 
 func (r *EmployeeRepository) CreateEmployee(employee models.Employee) (*models.Employee, error) {
