@@ -33,12 +33,12 @@ func (uc *UserController) GetUserByID(c *gin.Context) {
 	}
 
 	userDTO := dtos.GetUserDTO{
-		ID:        user.ID,
-		Email:     user.Email,
-		Password:  user.Password,
-		Token:     user.Token,
-		UserType:  user.UserTypeID,
-		UserState: user.UserStateTypeID,
+		ID:          user.ID,
+		Email:       user.Email,
+		Password:    user.Password,
+		Token:       user.Token,
+		UserTypeID:  user.UserTypeID,
+		UserStateID: user.UserStateTypeID,
 	}
 
 	c.JSON(http.StatusOK, userDTO)
@@ -58,12 +58,12 @@ func (uc *UserController) GetAllUsers(c *gin.Context) {
 	for _, user := range users {
 
 		userDTO := dtos.GetUserDTO{
-			ID:        user.ID,
-			Email:     user.Email,
-			Password:  user.Password,
-			Token:     user.Token,
-			UserType:  user.UserTypeID,
-			UserState: user.UserStateTypeID,
+			ID:          user.ID,
+			Email:       user.Email,
+			Password:    user.Password,
+			Token:       user.Token,
+			UserTypeID:  user.UserTypeID,
+			UserStateID: user.UserStateTypeID,
 		}
 
 		usersDTO = append(usersDTO, userDTO)
@@ -76,7 +76,7 @@ func (uc *UserController) SearchUsersByID(c *gin.Context) {
 	username := c.GetHeader("Username")
 	fmt.Println("Request made by user:", username)
 
-	query := c.Query("query")
+	query := c.Query("id")
 
 	if query == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Query parameter is required"})
@@ -98,12 +98,12 @@ func (uc *UserController) SearchUsersByID(c *gin.Context) {
 	for _, user := range users {
 
 		userDTO := dtos.GetUserDTO{
-			ID:        user.ID,
-			Email:     user.Email,
-			Password:  user.Password,
-			Token:     user.Token,
-			UserType:  user.UserTypeID,
-			UserState: user.UserStateTypeID,
+			ID:          user.ID,
+			Email:       user.Email,
+			Password:    user.Password,
+			Token:       user.Token,
+			UserTypeID:  user.UserTypeID,
+			UserStateID: user.UserStateTypeID,
 		}
 
 		usersDTO = append(usersDTO, userDTO)
@@ -115,7 +115,7 @@ func (uc *UserController) SearchUsersByEmail(c *gin.Context) {
 	username := c.GetHeader("Username")
 	fmt.Println("Request made by user:", username)
 
-	query := c.Query("query")
+	query := c.Query("email")
 
 	if query == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Query parameter is required"})
@@ -137,12 +137,12 @@ func (uc *UserController) SearchUsersByEmail(c *gin.Context) {
 	for _, user := range users {
 
 		userDTO := dtos.GetUserDTO{
-			ID:        user.ID,
-			Email:     user.Email,
-			Password:  user.Password,
-			Token:     user.Token,
-			UserType:  user.UserTypeID,
-			UserState: user.UserStateTypeID,
+			ID:          user.ID,
+			Email:       user.Email,
+			Password:    user.Password,
+			Token:       user.Token,
+			UserTypeID:  user.UserTypeID,
+			UserStateID: user.UserStateTypeID,
 		}
 
 		usersDTO = append(usersDTO, userDTO)
@@ -172,12 +172,12 @@ func (uc *UserController) UpdateUserState(c *gin.Context) {
 	}
 
 	userDTO := dtos.GetUserDTO{
-		ID:        user.ID,
-		Email:     user.Email,
-		Password:  user.Password,
-		Token:     user.Token,
-		UserType:  user.UserTypeID,
-		UserState: user.UserStateTypeID,
+		ID:          user.ID,
+		Email:       user.Email,
+		Password:    user.Password,
+		Token:       user.Token,
+		UserTypeID:  user.UserTypeID,
+		UserStateID: user.UserStateTypeID,
 	}
 
 	c.JSON(http.StatusOK, userDTO)
@@ -189,7 +189,7 @@ func (uc *UserController) UpdateUser(c *gin.Context) {
 
 	id := c.Param("id")
 
-	var dto dtos.GetUserDTO
+	var dto dtos.UpdateUserDTO
 	if err := c.ShouldBindJSON(&dto); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -208,13 +208,22 @@ func (uc *UserController) UpdateUser(c *gin.Context) {
 	user.Email = dto.Email
 	user.Password = dto.Password
 	user.Token = dto.Token
-	user.UserTypeID = dto.UserType
-	user.UserStateTypeID = dto.UserState
+	user.UserTypeID = dto.UserTypeID
+	user.UserStateTypeID = dto.UserStateID
 
 	err = uc.Service.UpdateUser(user)
+	var dtoUser dtos.GetUserDTO
+
+	dtoUser.ID = user.ID
+	dtoUser.Email = user.Email
+	dtoUser.Password = user.Password
+	dtoUser.Token = user.Token
+	dtoUser.UserTypeID = user.UserTypeID
+	dtoUser.UserStateID = user.UserStateTypeID
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		return
 	}
-	c.JSON(http.StatusOK, dto)
+	c.JSON(http.StatusOK, dtoUser)
 }

@@ -33,7 +33,7 @@ func SetupAndRunApp() error {
 
 	db = database.GetDB()
 	router = gin.Default()
-	database.MigrateDB()
+	//database.MigrateDB() //recordar descomentar para inicializar la base de datos
 
 	setUpUserRouter()
 	setUpItemTypeRouter()
