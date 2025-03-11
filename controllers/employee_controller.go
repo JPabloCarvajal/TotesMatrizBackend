@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"totesbackend/dtos"
+	"totesbackend/models"
 	"totesbackend/services"
 
 	"github.com/gin-gonic/gin"
@@ -117,27 +118,48 @@ func (ec *EmployeeController) CreateEmployee(c *gin.Context) {
 	username := c.GetHeader("Username")
 	fmt.Println("Request made by user:", username)
 
-	var dto dtos.UpdateEmployeeDTO
+	var dto dtos.CreateEmployeeDTO
 	if err := c.ShouldBindJSON(&dto); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format", "details": err.Error()})
 		return
 	}
 
-	employee, err := ec.Service.CreateEmployee(dto)
+	existingEmployee, _ := ec.Service.SearchEmployeeByID(dto.PersonalID)
+	if existingEmployee != nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "An employee with this Personal ID already exists"})
+		return
+	}
+
+	if dto.UserID <= 0 || dto.IdentifierTypeID <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User ID or Identifier Type ID"})
+		return
+	}
+
+	employee := models.Employee{
+		Names:            dto.Names,
+		LastNames:        dto.LastNames,
+		PersonalID:       dto.PersonalID,
+		Address:          dto.Address,
+		PhoneNumbers:     dto.PhoneNumbers,
+		UserID:           dto.UserID,
+		IdentifierTypeID: dto.IdentifierTypeID,
+	}
+
+	createdEmployee, err := ec.Service.CreateEmployee(employee)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating employee"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating employee", "details": err.Error()})
 		return
 	}
 
 	employeeDTO := dtos.GetEmployeeDTO{
-		ID:               employee.ID,
-		Names:            employee.Names,
-		LastNames:        employee.LastNames,
-		PersonalID:       employee.PersonalID,
-		Address:          employee.Address,
-		PhoneNumbers:     employee.PhoneNumbers,
-		UserID:           employee.UserID,
-		IdentifierTypeID: employee.IdentifierTypeID,
+		ID:               createdEmployee.ID,
+		Names:            createdEmployee.Names,
+		LastNames:        createdEmployee.LastNames,
+		PersonalID:       createdEmployee.PersonalID,
+		Address:          createdEmployee.Address,
+		PhoneNumbers:     createdEmployee.PhoneNumbers,
+		UserID:           createdEmployee.UserID,
+		IdentifierTypeID: createdEmployee.IdentifierTypeID,
 	}
 
 	c.JSON(http.StatusCreated, employeeDTO)
@@ -162,8 +184,7 @@ func (ec *EmployeeController) UpdateEmployee(c *gin.Context) {
 		return
 	}
 
-	employeeDTO := dtos.GetEmployeeDTO{
-		ID:               employee.ID,
+	employeeDTO := dtos.UpdateEmployeeDTO{
 		Names:            employee.Names,
 		LastNames:        employee.LastNames,
 		PersonalID:       employee.PersonalID,
@@ -174,20 +195,4 @@ func (ec *EmployeeController) UpdateEmployee(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, employeeDTO)
-}
-
-func (ec *EmployeeController) DeleteEmployee(c *gin.Context) {
-	id := c.Param("id")
-
-	err := ec.Service.DeleteEmployeeById(id)
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Employee not found"})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting employee"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "Employee deleted successfully"})
 }
