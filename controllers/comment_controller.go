@@ -21,7 +21,6 @@ func NewCommentController(service *services.CommentService) *CommentController {
 	return &CommentController{Service: service}
 }
 
-// 📌 Obtener un comentario por ID
 func (cc *CommentController) GetCommentByID(c *gin.Context) {
 	username := c.GetHeader("Username")
 	fmt.Println("Request made by user:", username)
@@ -52,7 +51,6 @@ func (cc *CommentController) GetCommentByID(c *gin.Context) {
 	c.JSON(http.StatusOK, commentDTO)
 }
 
-// 📌 Obtener todos los comentarios
 func (cc *CommentController) GetAllComments(c *gin.Context) {
 	username := c.GetHeader("Username")
 	fmt.Println("Request made by user:", username)
@@ -80,7 +78,6 @@ func (cc *CommentController) GetAllComments(c *gin.Context) {
 	c.JSON(http.StatusOK, commentsDTO)
 }
 
-// 📌 Buscar comentarios por email
 func (cc *CommentController) SearchCommentsByEmail(c *gin.Context) {
 	username := c.GetHeader("Username")
 	fmt.Println("Request made by user:", username)
@@ -114,7 +111,6 @@ func (cc *CommentController) SearchCommentsByEmail(c *gin.Context) {
 	c.JSON(http.StatusOK, commentsDTO)
 }
 
-// 📌 Crear un comentario
 func (cc *CommentController) CreateComment(c *gin.Context) {
 	username := c.GetHeader("Username")
 	fmt.Println("Request made by user:", username)
@@ -155,7 +151,6 @@ func (cc *CommentController) CreateComment(c *gin.Context) {
 	c.JSON(http.StatusCreated, commentDTO)
 }
 
-// 📌 Actualizar un comentario
 func (cc *CommentController) UpdateComment(c *gin.Context) {
 	username := c.GetHeader("Username")
 	fmt.Println("Request made by user:", username)
@@ -182,7 +177,6 @@ func (cc *CommentController) UpdateComment(c *gin.Context) {
 		return
 	}
 
-	// Actualizar campos
 	comment.Name = dto.Name
 	comment.LastName = dto.LastName
 	comment.Email = dto.Email
