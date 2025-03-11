@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"totesbackend/dtos"
+	"totesbackend/models"
 	"totesbackend/services"
 
 	"github.com/gin-gonic/gin"
@@ -226,4 +227,46 @@ func (uc *UserController) UpdateUser(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, dtoUser)
+}
+
+func (uc *UserController) CreateUser(c *gin.Context) {
+	username := c.GetHeader("Username")
+	fmt.Println("Request made by user:", username)
+
+	var dto dtos.CreateUserDTO
+	if err := c.ShouldBindJSON(&dto); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	existingUser, _ := uc.Service.GetUserByEmail(dto.Email)
+	if existingUser != nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "Email already in use"})
+		return
+	}
+
+	newUser := models.User{
+		Email:           dto.Email,
+		Password:        dto.Password,
+		Token:           dto.Token,
+		UserTypeID:      dto.UserTypeID,
+		UserStateTypeID: dto.UserStateID,
+	}
+
+	createdUser, err := uc.Service.CreateUser(&newUser)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+		return
+	}
+
+	userDTO := dtos.GetUserDTO{
+		ID:          createdUser.ID,
+		Email:       createdUser.Email,
+		Password:    createdUser.Password,
+		Token:       createdUser.Token,
+		UserTypeID:  createdUser.UserTypeID,
+		UserStateID: createdUser.UserStateTypeID,
+	}
+
+	c.JSON(http.StatusCreated, userDTO)
 }

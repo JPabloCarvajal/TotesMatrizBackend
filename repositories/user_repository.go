@@ -23,6 +23,15 @@ func (r *UserRepository) GetUserByID(id string) (*models.User, error) {
 	return &user, nil
 }
 
+func (r *UserRepository) GetUserByEmail(email string) (*models.User, error) {
+	var user models.User
+	err := r.DB.Preload("UserStateType").Preload("UserType").First(&user, "email = ?", email).Error
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 func (r *UserRepository) GetAllUsers() ([]models.User, error) {
 	var users []models.User
 	err := r.DB.Preload("UserStateType").Preload("UserType").Find(&users).Error
@@ -70,4 +79,12 @@ func (r *UserRepository) UpdateUser(user *models.User) error {
 		return err
 	}
 	return nil
+}
+
+func (r *UserRepository) CreateUser(user *models.User) (*models.User, error) {
+	// Intentar crear el usuario en la base de datos
+	if err := r.DB.Preload("UserStateType").Preload("UserType").Create(user).Error; err != nil {
+		return nil, err
+	}
+	return user, nil
 }

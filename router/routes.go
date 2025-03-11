@@ -21,8 +21,10 @@ func RegisterItemRoutes(router *gin.Engine, controller *controllers.ItemControll
 }
 
 func RegisterPermissionRoutes(router *gin.Engine, controller *controllers.PermissionController) {
-	router.GET("/permissions", controller.GetAllPermissions)
-	router.GET("/permissions/:id", controller.GetPermissionByID)
+
+	router.GET("/permission", controller.GetAllPermissions)
+	router.GET("/permission/:id", controller.GetPermissionByID)
+
 }
 
 func RegisterRoleRoutes(router *gin.Engine, controller *controllers.RoleController) {
@@ -49,18 +51,22 @@ func RegisterIdentifierTypeRoutes(router *gin.Engine, controller *controllers.Id
 }
 
 func RegisterUserRoutes(router *gin.Engine, controller *controllers.UserController) {
-	router.GET("/users", controller.GetAllUsers)
-	router.GET("/users/:id", controller.GetUserByID)
-	router.GET("/users/searchByID", controller.SearchUsersByID)
-	router.GET("/users/searchByEmail", controller.SearchUsersByEmail)
-	router.PATCH("/users/:id/state", controller.UpdateUserState)
-	router.PUT("/users/:id", controller.UpdateUser)
+	router.GET("/user", controller.GetAllUsers)
+	router.GET("/user/:id", controller.GetUserByID)
+	router.GET("/user/searchByID", controller.SearchUsersByID)
+	router.GET("/user/searchByEmail", controller.SearchUsersByEmail)
+	router.PATCH("/user/:id/state", controller.UpdateUserState)
+	router.PUT("/user/:id", controller.UpdateUser)
+	router.POST("/user", controller.CreateUser)
 }
 
 func RegisterEmployeeRoutes(router *gin.Engine, controller *controllers.EmployeeController) {
 	router.GET("/employee/", controller.GetAllEmployees)
 	router.GET("/employee/:id", controller.GetEmployeeByID)
-	router.GET("/employee/searchByName", controller.SearchEmployeesByName)
-	router.POST("/employee", controller.CreateEmployee)
+
+	router.GET("/employee/searchEmployeesByName", controller.SearchEmployeesByName)
+	router.POST("/employee/", controller.CreateEmployee)
 	router.PUT("/employee/:id", controller.UpdateEmployee)
+	router.DELETE("/employee/:id", controller.DeleteEmployee)
+
 }
