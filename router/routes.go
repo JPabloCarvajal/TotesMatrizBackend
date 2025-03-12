@@ -92,3 +92,7 @@ func RegisterCommentRoutes(router *gin.Engine, controller *controllers.CommentCo
 	router.POST("/comment", controller.CreateComment)
 	router.PUT("/comment/:id", controller.UpdateComment)
 }
+
+func RegisterAuthorizationRoutes(router *gin.Engine, controller *controllers.AuthorizationController) {
+	router.GET("/auth/check-permission", controller.CheckUserPermission)
+}

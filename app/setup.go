@@ -47,6 +47,7 @@ func SetupAndRunApp() error {
 	setUpAdditionalExpenseRouter()
 	setUpHistoricalItemPriceRouter()
 	setUpCommentRouter()
+	setUpAuthRouter()
 
 	router.Run("localhost:8080")
 
@@ -134,4 +135,11 @@ func setUpCommentRouter() {
 	commentService := services.NewCommentService(commentRepo)
 	commentController := controllers.NewCommentController(commentService)
 	routes.RegisterCommentRoutes(router, commentController)
+}
+
+func setUpAuthRouter() {
+	authRepo := repositories.NewAuthorizationRepository(db)
+	authService := services.NewAuthorizationService(authRepo)
+	authController := controllers.NewAuthorizationController(authService)
+	routes.RegisterAuthorizationRoutes(router, authController)
 }

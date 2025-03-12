@@ -16,19 +16,6 @@ func NewUserStateTypeController(service *services.UserStateTypeService) *UserSta
 	return &UserStateTypeController{Service: service}
 }
 
-func (ustc *UserStateTypeController) GetUserStateTypes(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
-
-	userStateTypes, err := ustc.Service.GetAllUserStateTypes()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving User State Types"})
-		return
-	}
-	c.JSON(http.StatusOK, userStateTypes)
-
-}
-
 func (ustc *UserStateTypeController) GetUserStateTypeByID(c *gin.Context) {
 	username := c.GetHeader("Username")
 	fmt.Println("Request made by user:", username)
@@ -42,4 +29,17 @@ func (ustc *UserStateTypeController) GetUserStateTypeByID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, userStateType)
+}
+
+func (ustc *UserStateTypeController) GetUserStateTypes(c *gin.Context) {
+	username := c.GetHeader("Username")
+	fmt.Println("Request made by user:", username)
+
+	userStateTypes, err := ustc.Service.GetAllUserStateTypes()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving User State Types"})
+		return
+	}
+	c.JSON(http.StatusOK, userStateTypes)
+
 }
