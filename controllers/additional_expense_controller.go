@@ -19,18 +19,6 @@ func NewAdditionalExpenseController(service *services.AdditionalExpenseService) 
 	return &AdditionalExpenseController{Service: service}
 }
 
-func (aec *AdditionalExpenseController) GetAllAdditionalExpenses(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
-
-	additionalExpenses, err := aec.Service.GetAllAdditionalExpenses()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving additional expenses"})
-		return
-	}
-	c.JSON(http.StatusOK, additionalExpenses)
-}
-
 func (aec *AdditionalExpenseController) GetAdditionalExpenseByID(c *gin.Context) {
 	idParam := c.Param("id")
 
@@ -46,6 +34,19 @@ func (aec *AdditionalExpenseController) GetAdditionalExpenseByID(c *gin.Context)
 	}
 
 	c.JSON(http.StatusOK, additionalExpense)
+}
+
+func (aec *AdditionalExpenseController) GetAllAdditionalExpenses(c *gin.Context) {
+
+	username := c.GetHeader("Username")
+	fmt.Println("Request made by user:", username)
+
+	additionalExpenses, err := aec.Service.GetAllAdditionalExpenses()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving additional expenses"})
+		return
+	}
+	c.JSON(http.StatusOK, additionalExpenses)
 }
 
 func (aec *AdditionalExpenseController) CreateAdditionalExpense(c *gin.Context) {

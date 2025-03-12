@@ -17,18 +17,6 @@ func NewItemTypeController(service *services.ItemTypeService) *ItemTypeControlle
 	return &ItemTypeController{Service: service}
 }
 
-func (itc *ItemTypeController) GetItemTypes(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
-
-	itemTypes, err := itc.Service.GetAllItemTypes()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving Item Types"})
-		return
-	}
-	c.JSON(http.StatusOK, itemTypes)
-}
-
 func (itc *ItemTypeController) GetItemTypeByID(c *gin.Context) {
 	username := c.GetHeader("Username")
 	fmt.Println("Request made by user:", username)
@@ -42,4 +30,16 @@ func (itc *ItemTypeController) GetItemTypeByID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, itemType)
+}
+
+func (itc *ItemTypeController) GetItemTypes(c *gin.Context) {
+	username := c.GetHeader("Username")
+	fmt.Println("Request made by user:", username)
+
+	itemTypes, err := itc.Service.GetAllItemTypes()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving Item Types"})
+		return
+	}
+	c.JSON(http.StatusOK, itemTypes)
 }

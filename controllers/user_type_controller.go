@@ -17,42 +17,7 @@ func NewUserTypeController(service *services.UserTypeService) *UserTypeControlle
 	return &UserTypeController{Service: service}
 }
 
-func (utc *UserTypeController) ObtainAllUserTypes(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
-
-	userTypes, err := utc.Service.ObtainAllUserTypes()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving user types"})
-		return
-	}
-
-	var userTypesDTO []dtos.UserTypeDTO
-	for _, userType := range userTypes {
-		roleIDs, err := utc.Service.GetRolesForUserType(userType.ID)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving roles for user type"})
-			return
-		}
-
-		userTypeDTO := dtos.UserTypeDTO{
-			ID:          userType.ID,
-			Name:        userType.Name,
-			Description: userType.Description,
-			Roles:       make([]string, len(roleIDs)),
-		}
-
-		for i, roleID := range roleIDs {
-			userTypeDTO.Roles[i] = fmt.Sprintf("%d", roleID) // Convertir IDs a string
-		}
-
-		userTypesDTO = append(userTypesDTO, userTypeDTO)
-	}
-
-	c.JSON(http.StatusOK, userTypesDTO)
-}
-
-func (utc *UserTypeController) ObtainUserTypeByID(c *gin.Context) {
+func (utc *UserTypeController) GetUserTypeByID(c *gin.Context) {
 	username := c.GetHeader("Username")
 	fmt.Println("Request made by user:", username)
 
@@ -89,7 +54,43 @@ func (utc *UserTypeController) ObtainUserTypeByID(c *gin.Context) {
 	c.JSON(http.StatusOK, userTypeDTO)
 
 }
-func (utc *UserTypeController) Exists(c *gin.Context) {
+
+func (utc *UserTypeController) GetAllUserTypes(c *gin.Context) {
+	username := c.GetHeader("Username")
+	fmt.Println("Request made by user:", username)
+
+	userTypes, err := utc.Service.ObtainAllUserTypes()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving user types"})
+		return
+	}
+
+	var userTypesDTO []dtos.UserTypeDTO
+	for _, userType := range userTypes {
+		roleIDs, err := utc.Service.GetRolesForUserType(userType.ID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving roles for user type"})
+			return
+		}
+
+		userTypeDTO := dtos.UserTypeDTO{
+			ID:          userType.ID,
+			Name:        userType.Name,
+			Description: userType.Description,
+			Roles:       make([]string, len(roleIDs)),
+		}
+
+		for i, roleID := range roleIDs {
+			userTypeDTO.Roles[i] = fmt.Sprintf("%d", roleID) // Convertir IDs a string
+		}
+
+		userTypesDTO = append(userTypesDTO, userTypeDTO)
+	}
+
+	c.JSON(http.StatusOK, userTypesDTO)
+}
+
+func (utc *UserTypeController) ExistsUserType(c *gin.Context) {
 	username := c.GetHeader("Username")
 	fmt.Println("Request made by user:", username)
 

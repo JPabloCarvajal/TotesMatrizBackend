@@ -37,9 +37,9 @@ func RegisterRoleRoutes(router *gin.Engine, controller *controllers.RoleControll
 }
 
 func RegisterUserTypeRoutes(router *gin.Engine, controller *controllers.UserTypeController) {
-	router.GET("/user-types", controller.ObtainAllUserTypes)
-	router.GET("/user-types/:id", controller.ObtainUserTypeByID)
-	router.GET("/user-types/:id/exists", controller.Exists)
+	router.GET("/user-types", controller.GetAllUserTypes)
+	router.GET("/user-types/:id", controller.GetUserTypeByID)
+	router.GET("/user-types/:id/exists", controller.ExistsUserType)
 }
 
 func RegisterUserStateTypeRoutes(router *gin.Engine, controller *controllers.UserStateTypeController) {
