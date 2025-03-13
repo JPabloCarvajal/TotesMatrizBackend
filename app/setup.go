@@ -1,6 +1,7 @@
 package app
 
 import (
+	"time"
 	"totesbackend/config"
 	"totesbackend/controllers"
 	"totesbackend/database"
@@ -8,6 +9,7 @@ import (
 	routes "totesbackend/router"
 	"totesbackend/services"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -35,6 +37,15 @@ func SetupAndRunApp() error {
 	router = gin.Default()
 	database.MigrateDB() // recordar descomentar para inicializar la base de datos
 
+	// Configurar CORS
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000", "http://127.0.0.1:5503", "http://127.0.0.1:5500"}, // Especifica los orígenes permitidos
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
 	setUpUserRouter()
 	setUpItemTypeRouter()
 	setUpItemRouter()
@@ -48,6 +59,7 @@ func SetupAndRunApp() error {
 	setUpHistoricalItemPriceRouter()
 	setUpCommentRouter()
 	setUpAuthRouter()
+	setUpUserLogRouter()
 	setUpAppointmentRouter()
 	setUpCustomerRouter()
 
@@ -147,6 +159,12 @@ func setUpAuthRouter() {
 	routes.RegisterAuthorizationRoutes(router, authController)
 }
 
+func setUpUserLogRouter() {
+	userLogRepo := repositories.NewUserLogRepository(db)
+	userLogService := services.NewUserLogService(userLogRepo)
+	userLogController := controllers.NewUserLogController(userLogService)
+	routes.RegisterUserLogRoutes(router, userLogController)
+
 func setUpAppointmentRouter() {
 	appointmentRepo := repositories.NewAppointmentRepository(db)
 	appointmentService := services.NewAppointmentService(appointmentRepo)
@@ -159,4 +177,5 @@ func setUpCustomerRouter() {
 	customerService := services.NewCustomerService(customerRepo)
 	customerController := controllers.NewCustomerController(customerService)
 	routes.RegisterCustomerRoutes(router, customerController)
+
 }
