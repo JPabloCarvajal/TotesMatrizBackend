@@ -33,7 +33,7 @@ func SetupAndRunApp() error {
 
 	db = database.GetDB()
 	router = gin.Default()
-	database.MigrateDB() //recordar descomentar para inicializar la base de datos
+	database.MigrateDB() // recordar descomentar para inicializar la base de datos
 
 	setUpUserRouter()
 	setUpItemTypeRouter()
@@ -48,11 +48,14 @@ func SetupAndRunApp() error {
 	setUpHistoricalItemPriceRouter()
 	setUpCommentRouter()
 	setUpAuthRouter()
+	setUpAppointmentRouter()
+	setUpCustomerRouter()
 
 	router.Run("localhost:8080")
 
 	return nil
 }
+
 func setUpPermissionRouter() {
 	permissionRepo := repositories.NewPermissionRepository(db)
 	permissionService := services.NewPermissionService(permissionRepo)
@@ -142,4 +145,18 @@ func setUpAuthRouter() {
 	authService := services.NewAuthorizationService(authRepo)
 	authController := controllers.NewAuthorizationController(authService)
 	routes.RegisterAuthorizationRoutes(router, authController)
+}
+
+func setUpAppointmentRouter() {
+	appointmentRepo := repositories.NewAppointmentRepository(db)
+	appointmentService := services.NewAppointmentService(appointmentRepo)
+	appointmentController := controllers.NewAppointmentController(appointmentService)
+	routes.RegisterAppointmentRoutes(router, appointmentController)
+}
+
+func setUpCustomerRouter() {
+	customerRepo := repositories.NewCustomerRepository(db)
+	customerService := services.NewCustomerService(customerRepo)
+	customerController := controllers.NewCustomerController(customerService)
+	routes.RegisterCustomerRoutes(router, customerController)
 }
