@@ -96,3 +96,7 @@ func RegisterCommentRoutes(router *gin.Engine, controller *controllers.CommentCo
 func RegisterAuthorizationRoutes(router *gin.Engine, controller *controllers.AuthorizationController) {
 	router.GET("/auth/check-permission", controller.CheckUserPermission)
 }
+
+func RegisterUserLogRoutes(router *gin.Engine, controller *controllers.UserLogController) {
+	router.GET("/user-log/:id", controller.GetUserLogs)
+}
