@@ -100,3 +100,19 @@ func RegisterAuthorizationRoutes(router *gin.Engine, controller *controllers.Aut
 func RegisterUserLogRoutes(router *gin.Engine, controller *controllers.UserLogController) {
 	router.GET("/user-log/:id", controller.GetUserLogs)
 }
+func RegisterAppointmentRoutes(router *gin.Engine, controller *controllers.AppointmentController) {
+	router.GET("/appointment/:id", controller.GetAppointmentByID)
+	router.GET("/appointments", controller.GetAllAppointments)
+	router.GET("/appointments/searchByState", controller.SearchAppointmentsByState)
+	router.GET("/appointments/customer/:customerID", controller.GetAppointmentsByCustomerID)
+	router.POST("/appointment", controller.CreateAppointment)
+	router.PUT("/appointment/:id", controller.UpdateAppointment)
+}
+
+func RegisterCustomerRoutes(router *gin.Engine, controller *controllers.CustomerController) {
+	router.GET("/customer/:id", controller.GetCustomerByID)
+	router.GET("/customers", controller.GetCustomers)
+	router.GET("/customer/email/:email", controller.GetCustomerByEmail)
+	router.POST("/customer", controller.CreateCustomer)
+	router.PUT("/customer/:id", controller.UpdateCustomer)
+}
