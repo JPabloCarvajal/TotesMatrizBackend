@@ -76,7 +76,9 @@ func (r *ItemRepository) UpdateItem(item *models.Item) (bool, error) {
 
 	priceChanged := existingItem.SellingPrice != item.SellingPrice
 
-	if err := r.DB.Save(item).Error; err != nil {
+	existingItem.ItemTypeID = item.ItemTypeID
+
+	if err := r.DB.Model(&existingItem).Updates(item).Error; err != nil {
 		return false, err
 	}
 
