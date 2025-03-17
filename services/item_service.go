@@ -1,6 +1,7 @@
 package services
 
 import (
+	"strconv"
 	"time"
 	"totesbackend/models"
 	"totesbackend/repositories"
@@ -45,11 +46,11 @@ func (s *ItemService) UpdateItem(item *models.Item) error {
 	if !SellingPriceChanged {
 		return nil
 	}
-
+	oldItem, _ := s.Repo.GetItemByID(strconv.Itoa(item.ID))
 	historicalPrice := models.HistoricalItemPrice{
-		ItemID:     item.ID,
-		Price:      item.SellingPrice,
-		ModifiedAt: time.Now(),
+		ItemID:  item.ID,
+		Price:   oldItem.SellingPrice,
+		AddedAt: time.Now(),
 	}
 
 	if err := hisRepo.CreateHistoricalItemPrice(&historicalPrice); err != nil {
@@ -59,5 +60,19 @@ func (s *ItemService) UpdateItem(item *models.Item) error {
 }
 
 func (s *ItemService) CreateItem(item *models.Item) (*models.Item, error) {
-	return s.Repo.CreateItem(item)
+	hisRepo := repositories.NewHistoricalItemPriceRepository(s.Repo.DB)
+	item, err := s.Repo.CreateItem(item)
+
+	if err != nil {
+		return item, err
+	}
+
+	historicalPrice := models.HistoricalItemPrice{
+		ItemID:  item.ID,
+		Price:   item.SellingPrice,
+		AddedAt: time.Now(),
+	}
+	hisRepo.CreateHistoricalItemPrice(&historicalPrice)
+
+	return item, err
 }

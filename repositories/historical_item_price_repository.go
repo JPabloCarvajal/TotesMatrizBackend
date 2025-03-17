@@ -20,6 +20,6 @@ func (r *HistoricalItemPriceRepository) CreateHistoricalItemPrice(price *models.
 
 func (r *HistoricalItemPriceRepository) GetHistoricalItemPrice(itemID string) ([]models.HistoricalItemPrice, error) {
 	var historicalPrices []models.HistoricalItemPrice
-	err := r.DB.Where("item_id = ?", itemID).Order("modified_at DESC").Find(&historicalPrices).Error
+	err := r.DB.Where("item_id = ?", itemID).Order("added_at DESC").Find(&historicalPrices).Error
 	return historicalPrices, err
 }
