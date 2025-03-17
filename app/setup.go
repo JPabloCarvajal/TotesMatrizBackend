@@ -164,7 +164,7 @@ func setUpUserLogRouter() {
 	userLogService := services.NewUserLogService(userLogRepo)
 	userLogController := controllers.NewUserLogController(userLogService)
 	routes.RegisterUserLogRoutes(router, userLogController)
-
+}
 func setUpAppointmentRouter() {
 	appointmentRepo := repositories.NewAppointmentRepository(db)
 	appointmentService := services.NewAppointmentService(appointmentRepo)
