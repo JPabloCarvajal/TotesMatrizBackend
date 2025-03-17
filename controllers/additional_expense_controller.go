@@ -57,11 +57,10 @@ func (aec *AdditionalExpenseController) CreateAdditionalExpense(c *gin.Context) 
 	}
 
 	newExpense := &models.AdditionalExpense{
-		Name:         dto.Name,
-		ItemID:       dto.ItemID,
-		Expense:      dto.Expense,
-		IsPercentage: dto.IsPercentage,
-		Description:  dto.Description,
+		Name:        dto.Name,
+		ItemID:      dto.ItemID,
+		Expense:     dto.Expense,
+		Description: dto.Description,
 	}
 
 	createdExpense, err := aec.Service.CreateAdditionalExpense(newExpense)
@@ -107,7 +106,6 @@ func (aec *AdditionalExpenseController) UpdateAdditionalExpense(c *gin.Context) 
 	expense.Name = dto.Name
 	expense.ItemID = dto.ItemID
 	expense.Expense = dto.Expense
-	expense.IsPercentage = dto.IsPercentage
 	expense.Description = dto.Description
 
 	updatedExpense, err := aec.Service.UpdateAdditionalExpense(expense)
