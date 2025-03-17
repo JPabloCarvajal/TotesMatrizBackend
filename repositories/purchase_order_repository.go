@@ -26,7 +26,7 @@ func (r *PurchaseOrderRepository) GetPurchaseOrderByID(id string) (*models.Purch
 func (r *PurchaseOrderRepository) GetPurchaseOrdersByCustomerID(customerID string) ([]models.PurchaseOrder, error) {
 	var purchaseOrders []models.PurchaseOrder
 	err := r.DB.Preload("Seller").Preload("Responsible").Preload("Customer").Preload("OrderState").
-		Where("customer_id = ?", customerID).Find(&purchaseOrders).Error
+		Where("CAST(customer_id AS TEXT) = ?", customerID).Find(&purchaseOrders).Error
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func (r *PurchaseOrderRepository) GetPurchaseOrdersByCustomerID(customerID strin
 func (r *PurchaseOrderRepository) GetPurchaseOrdersBySellerID(sellerID string) ([]models.PurchaseOrder, error) {
 	var purchaseOrders []models.PurchaseOrder
 	err := r.DB.Preload("Seller").Preload("Responsible").Preload("Customer").Preload("OrderState").
-		Where("seller_id = ?", sellerID).Find(&purchaseOrders).Error
+		Where("CAST(seller_id AS TEXT) = ?", sellerID).Find(&purchaseOrders).Error
 	if err != nil {
 		return nil, err
 	}

@@ -35,7 +35,7 @@ func (r *ItemRepository) GetAllItems() ([]models.Item, error) {
 func (r *ItemRepository) SearchItemsByID(query string) ([]models.Item, error) {
 	var items []models.Item
 	err := r.DB.Preload("ItemType").Preload("AdditionalExpenses").
-		Where("id LIKE ?", query+"%").Find(&items).Error
+		Where("CAST(id AS TEXT) LIKE ?", query+"%").Find(&items).Error
 	if err != nil {
 		return nil, err
 	}
