@@ -20,3 +20,11 @@ func (s *PermissionService) GetPermissionByID(id uint) (*models.Permission, erro
 func (s *PermissionService) GetAllPermissions() ([]models.Permission, error) {
 	return s.Repo.GetAllPermissions()
 }
+
+func (s *PermissionService) SearchPermissionsByID(query string) ([]models.Permission, error) {
+	return s.Repo.SearchPermissionsByID(query)
+}
+
+func (s *PermissionService) SearchPermissionsByName(query string) ([]models.Permission, error) {
+	return s.Repo.SearchPermissionsByName(query)
+}

@@ -17,8 +17,8 @@ func (s *UserTypeService) ObtainAllUserTypes() ([]models.UserType, error) {
 	return s.Repo.ObtainAllUserTypes()
 }
 
-func (s *UserTypeService) ObtainUserTypeByID(id uint) (*models.UserType, error) {
-	return s.Repo.ObtainUserTypeByID(id)
+func (s *UserTypeService) GetUserTypeByID(id uint) (*models.UserType, error) {
+	return s.Repo.GetUserTypeByID(id)
 }
 
 func (s *UserTypeService) GetRolesForUserType(userTypeID uint) ([]uint, error) {
@@ -27,4 +27,12 @@ func (s *UserTypeService) GetRolesForUserType(userTypeID uint) ([]uint, error) {
 
 func (s *UserTypeService) Exists(userTypeID uint) (bool, error) {
 	return s.Repo.Exists(userTypeID)
+}
+
+func (s *UserTypeService) SearchUserTypesByID(query string) ([]models.UserType, error) {
+	return s.Repo.SearchUserTypesByID(query)
+}
+
+func (s *UserTypeService) SearchUserTypesByName(query string) ([]models.UserType, error) {
+	return s.Repo.SearchUserTypesByName(query)
 }

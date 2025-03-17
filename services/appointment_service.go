@@ -36,3 +36,11 @@ func (s *AppointmentService) CreateAppointment(appointment models.Appointment) (
 func (s *AppointmentService) UpdateAppointment(appointment *models.Appointment) error {
 	return s.Repo.UpdateAppointment(appointment)
 }
+
+func (s *AppointmentService) SearchAppointmentsByID(query string) ([]models.Appointment, error) {
+	return s.Repo.SearchAppointmentsByID(query)
+}
+
+func (s *AppointmentService) SearchAppointmentsByCustomerID(query string) ([]models.Appointment, error) {
+	return s.Repo.SearchAppointmentsByCustomerID(query)
+}

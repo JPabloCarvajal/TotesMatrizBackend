@@ -28,7 +28,7 @@ func (utc *UserTypeController) GetUserTypeByID(c *gin.Context) {
 		return
 	}
 
-	userType, err := utc.Service.ObtainUserTypeByID(id)
+	userType, err := utc.Service.GetUserTypeByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User type not found"})
 		return
@@ -48,11 +48,10 @@ func (utc *UserTypeController) GetUserTypeByID(c *gin.Context) {
 	}
 
 	for i, roleID := range roleIDs {
-		userTypeDTO.Roles[i] = fmt.Sprintf("%d", roleID) // Convertir IDs a string
+		userTypeDTO.Roles[i] = fmt.Sprintf("%d", roleID)
 	}
 
 	c.JSON(http.StatusOK, userTypeDTO)
-
 }
 
 func (utc *UserTypeController) GetAllUserTypes(c *gin.Context) {
@@ -81,7 +80,7 @@ func (utc *UserTypeController) GetAllUserTypes(c *gin.Context) {
 		}
 
 		for i, roleID := range roleIDs {
-			userTypeDTO.Roles[i] = fmt.Sprintf("%d", roleID) // Convertir IDs a string
+			userTypeDTO.Roles[i] = fmt.Sprintf("%d", roleID)
 		}
 
 		userTypesDTO = append(userTypesDTO, userTypeDTO)
@@ -108,4 +107,68 @@ func (utc *UserTypeController) ExistsUserType(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"exists": exists})
+}
+
+func (utc *UserTypeController) SearchUserTypesByID(c *gin.Context) {
+	username := c.GetHeader("Username")
+	fmt.Println("Request made by user:", username)
+
+	query := c.Query("id")
+	userTypes, err := utc.Service.SearchUserTypesByID(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving user types"})
+		return
+	}
+
+	var userTypesDTO []dtos.UserTypeDTO
+	for _, userType := range userTypes {
+		roleIDs, _ := utc.Service.GetRolesForUserType(userType.ID)
+
+		userTypeDTO := dtos.UserTypeDTO{
+			ID:          userType.ID,
+			Name:        userType.Name,
+			Description: userType.Description,
+			Roles:       make([]string, len(roleIDs)),
+		}
+
+		for i, roleID := range roleIDs {
+			userTypeDTO.Roles[i] = fmt.Sprintf("%d", roleID)
+		}
+
+		userTypesDTO = append(userTypesDTO, userTypeDTO)
+	}
+
+	c.JSON(http.StatusOK, userTypesDTO)
+}
+
+func (utc *UserTypeController) SearchUserTypesByName(c *gin.Context) {
+	username := c.GetHeader("Username")
+	fmt.Println("Request made by user:", username)
+
+	query := c.Query("name")
+	userTypes, err := utc.Service.SearchUserTypesByName(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving user types"})
+		return
+	}
+
+	var userTypesDTO []dtos.UserTypeDTO
+	for _, userType := range userTypes {
+		roleIDs, _ := utc.Service.GetRolesForUserType(userType.ID)
+
+		userTypeDTO := dtos.UserTypeDTO{
+			ID:          userType.ID,
+			Name:        userType.Name,
+			Description: userType.Description,
+			Roles:       make([]string, len(roleIDs)),
+		}
+
+		for i, roleID := range roleIDs {
+			userTypeDTO.Roles[i] = fmt.Sprintf("%d", roleID)
+		}
+
+		userTypesDTO = append(userTypesDTO, userTypeDTO)
+	}
+
+	c.JSON(http.StatusOK, userTypesDTO)
 }

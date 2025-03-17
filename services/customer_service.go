@@ -32,3 +32,11 @@ func (s *CustomerService) CreateCustomer(customer models.Customer) (*models.Cust
 func (s *CustomerService) UpdateCustomer(customer *models.Customer) error {
 	return s.Repo.UpdateCustomer(customer)
 }
+
+func (s *CustomerService) SearchCustomersByID(id string) ([]models.Customer, error) {
+	return s.Repo.SearchCustomersByID(id)
+}
+
+func (s *CustomerService) SearchCustomersByName(name string) ([]models.Customer, error) {
+	return s.Repo.SearchCustomersByName(name)
+}

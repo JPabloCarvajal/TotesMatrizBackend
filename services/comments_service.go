@@ -32,3 +32,11 @@ func (s *CommentService) UpdateComment(comment *models.Comment) error {
 func (s *CommentService) CreateComment(comment models.Comment) (*models.Comment, error) {
 	return s.Repo.CreateComment(&comment)
 }
+
+func (s *CommentService) SearchCommentsByID(query string) ([]models.Comment, error) {
+	return s.Repo.SearchCommentsByID(query)
+}
+
+func (s *CommentService) SearchCommentsByName(name string) ([]models.Comment, error) {
+	return s.Repo.SearchCommentsByName(name)
+}
