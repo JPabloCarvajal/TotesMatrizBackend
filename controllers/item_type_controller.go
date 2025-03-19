@@ -1,9 +1,10 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
+	"totesbackend/config"
+	"totesbackend/controllers/utilities"
 	"totesbackend/services"
 
 	"github.com/gin-gonic/gin"
@@ -11,18 +12,22 @@ import (
 
 type ItemTypeController struct {
 	Service *services.ItemTypeService
+	Auth    *utilities.AuthorizationUtil
 }
 
-func NewItemTypeController(service *services.ItemTypeService) *ItemTypeController {
-	return &ItemTypeController{Service: service}
+func NewItemTypeController(service *services.ItemTypeService, auth *utilities.AuthorizationUtil) *ItemTypeController {
+	return &ItemTypeController{Service: service, Auth: auth}
 }
 
 func (itc *ItemTypeController) GetItemTypeByID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+
+	permissionId := config.PERMISSION_GET_ITEM_BY_ID
+
+	if !itc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	id := c.Param("id")
-
 	itemType, err := itc.Service.GetItemTypeByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Item Type not found"})
@@ -33,8 +38,11 @@ func (itc *ItemTypeController) GetItemTypeByID(c *gin.Context) {
 }
 
 func (itc *ItemTypeController) GetItemTypes(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_ITEM_TYPES
+
+	if !itc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	itemTypes, err := itc.Service.GetAllItemTypes()
 	if err != nil {

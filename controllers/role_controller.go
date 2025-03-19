@@ -3,6 +3,8 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"totesbackend/config"
+	"totesbackend/controllers/utilities"
 	"totesbackend/dtos"
 	"totesbackend/services"
 
@@ -11,15 +13,19 @@ import (
 
 type RoleController struct {
 	Service *services.RoleService
+	Auth    *utilities.AuthorizationUtil
 }
 
-func NewRoleController(service *services.RoleService) *RoleController {
-	return &RoleController{Service: service}
+func NewRoleController(service *services.RoleService, auth *utilities.AuthorizationUtil) *RoleController {
+	return &RoleController{Service: service, Auth: auth}
 }
 
 func (rc *RoleController) GetRoleByID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_ROLE_BY_ID
+
+	if !rc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	idParam := c.Param("id")
 	var id uint
@@ -56,8 +62,11 @@ func (rc *RoleController) GetRoleByID(c *gin.Context) {
 }
 
 func (rc *RoleController) GetAllRoles(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_ALL_ROLES
+
+	if !rc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	roles, err := rc.Service.GetAllRoles()
 	if err != nil {
@@ -69,6 +78,12 @@ func (rc *RoleController) GetAllRoles(c *gin.Context) {
 }
 
 func (rc *RoleController) GetAllPermissionsOfRole(c *gin.Context) {
+	permissionId := config.PERMISSION_GET_ALL_PERMISSIONS_OF_ROLE
+
+	if !rc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
 	roleIDParam := c.Param("id")
 	var roleID uint
 	if _, err := fmt.Sscanf(roleIDParam, "%d", &roleID); err != nil {
@@ -86,8 +101,11 @@ func (rc *RoleController) GetAllPermissionsOfRole(c *gin.Context) {
 }
 
 func (rc *RoleController) ExistRole(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_EXIST_ROLE
+
+	if !rc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	idParam := c.Param("id")
 	var id uint

@@ -2,9 +2,10 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
+	"totesbackend/config"
+	"totesbackend/controllers/utilities"
 	"totesbackend/dtos"
 	"totesbackend/models"
 	"totesbackend/services"
@@ -15,15 +16,19 @@ import (
 
 type CommentController struct {
 	Service *services.CommentService
+	Auth    *utilities.AuthorizationUtil
 }
 
-func NewCommentController(service *services.CommentService) *CommentController {
-	return &CommentController{Service: service}
+func NewCommentController(service *services.CommentService, auth *utilities.AuthorizationUtil) *CommentController {
+	return &CommentController{Service: service, Auth: auth}
 }
 
 func (cc *CommentController) GetCommentByID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_PERMISSION_BY_ID
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -52,8 +57,11 @@ func (cc *CommentController) GetCommentByID(c *gin.Context) {
 }
 
 func (cc *CommentController) GetAllComments(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_ALL_COMMENTS
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	comments, err := cc.Service.GetAllComments()
 	if err != nil {
@@ -79,8 +87,12 @@ func (cc *CommentController) GetAllComments(c *gin.Context) {
 }
 
 func (cc *CommentController) SearchCommentsByEmail(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+
+	permissionId := config.PERMISSION_SEARCH_COMMENTS_BY_EMAIL
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	email := c.Query("email")
 	if email == "" {
@@ -112,8 +124,11 @@ func (cc *CommentController) SearchCommentsByEmail(c *gin.Context) {
 }
 
 func (cc *CommentController) CreateComment(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_CREATE_COMMENT
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	var dto dtos.CreateCommentDTO
 	if err := c.ShouldBindJSON(&dto); err != nil {
@@ -152,8 +167,11 @@ func (cc *CommentController) CreateComment(c *gin.Context) {
 }
 
 func (cc *CommentController) UpdateComment(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_UPDATE_COMMENT
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

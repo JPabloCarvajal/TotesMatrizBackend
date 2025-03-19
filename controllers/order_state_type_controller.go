@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
+	"totesbackend/config"
+	"totesbackend/controllers/utilities"
 	"totesbackend/services"
 
 	"github.com/gin-gonic/gin"
@@ -10,15 +11,19 @@ import (
 
 type OrderStateTypeController struct {
 	Service *services.OrderStateTypeService
+	Auth    *utilities.AuthorizationUtil
 }
 
-func NewOrderStateTypeController(service *services.OrderStateTypeService) *OrderStateTypeController {
-	return &OrderStateTypeController{Service: service}
+func NewOrderStateTypeController(service *services.OrderStateTypeService, auth *utilities.AuthorizationUtil) *OrderStateTypeController {
+	return &OrderStateTypeController{Service: service, Auth: auth}
 }
 
 func (ostc *OrderStateTypeController) GetOrderStateTypeByID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_ORDER_STATE_TYPE_BY_ID
+
+	if !ostc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	id := c.Param("id")
 
@@ -31,9 +36,12 @@ func (ostc *OrderStateTypeController) GetOrderStateTypeByID(c *gin.Context) {
 	c.JSON(http.StatusOK, orderStateType)
 }
 
-func (ostc *OrderStateTypeController) GetOrderStateTypes(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+func (ostc *OrderStateTypeController) GetAllOrderStateTypes(c *gin.Context) {
+	permissionId := config.PERMISSION_GET_ALL_ORDER_STATE_TYPES
+
+	if !ostc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	orderStateTypes, err := ostc.Service.GetAllOrderStateTypes()
 	if err != nil {

@@ -2,9 +2,10 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
+	"totesbackend/config"
+	"totesbackend/controllers/utilities"
 	"totesbackend/dtos"
 	"totesbackend/models"
 	"totesbackend/services"
@@ -15,15 +16,19 @@ import (
 
 type PurchaseOrderController struct {
 	Service *services.PurchaseOrderService
+	Auth    *utilities.AuthorizationUtil
 }
 
-func NewPurchaseOrderController(service *services.PurchaseOrderService) *PurchaseOrderController {
-	return &PurchaseOrderController{Service: service}
+func NewPurchaseOrderController(service *services.PurchaseOrderService, auth *utilities.AuthorizationUtil) *PurchaseOrderController {
+	return &PurchaseOrderController{Service: service, Auth: auth}
 }
 
 func (poc *PurchaseOrderController) GetPurchaseOrderByID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_PURCHASE_ORDER_BY_ID
+
+	if !poc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	query := c.Param("id")
 
@@ -48,8 +53,11 @@ func (poc *PurchaseOrderController) GetPurchaseOrderByID(c *gin.Context) {
 }
 
 func (poc *PurchaseOrderController) GetAllPurchaseOrders(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_ALL_PURCHASE_ORDERS
+
+	if !poc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	purchaseOrders, err := poc.Service.GetAllPurchaseOrders()
 	if err != nil {
@@ -76,8 +84,11 @@ func (poc *PurchaseOrderController) GetAllPurchaseOrders(c *gin.Context) {
 }
 
 func (poc *PurchaseOrderController) SearchPurchaseOrdersByID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_SEARCH_PURCHASE_ORDERS_BY_ID
+
+	if !poc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	id := c.Query("id")
 
@@ -116,8 +127,11 @@ func (poc *PurchaseOrderController) SearchPurchaseOrdersByID(c *gin.Context) {
 }
 
 func (poc *PurchaseOrderController) GetPurchaseOrdersByCustomerID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_PURCHASE_ORDERS_BY_CUSTOMER_ID
+
+	if !poc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	customerID := c.Param("customer_id")
 
@@ -151,8 +165,11 @@ func (poc *PurchaseOrderController) GetPurchaseOrdersByCustomerID(c *gin.Context
 }
 
 func (poc *PurchaseOrderController) GetPurchaseOrdersBySellerID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_PURCHASE_ORDERS_BY_SELLER_ID
+
+	if !poc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	sellerID := c.Param("sellerID")
 
@@ -181,9 +198,11 @@ func (poc *PurchaseOrderController) GetPurchaseOrdersBySellerID(c *gin.Context) 
 }
 
 func (poc *PurchaseOrderController) UpdatePurchaseOrderState(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_UPDATE_PURCHASE_ORDER_STATE
 
+	if !poc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 	id := c.Param("id")
 
 	var request struct {
@@ -216,8 +235,11 @@ func (poc *PurchaseOrderController) UpdatePurchaseOrderState(c *gin.Context) {
 }
 
 func (poc *PurchaseOrderController) UpdatePurchaseOrder(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_UPDATE_PURCHASE_ORDER
+
+	if !poc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	id := c.Param("id")
 
@@ -265,8 +287,11 @@ func (poc *PurchaseOrderController) UpdatePurchaseOrder(c *gin.Context) {
 }
 
 func (poc *PurchaseOrderController) CreatePurchaseOrder(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_CREATE_PURCHASE_ORDER
+
+	if !poc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	var dto dtos.CreatePurchaseOrderDTO
 	if err := c.ShouldBindJSON(&dto); err != nil {

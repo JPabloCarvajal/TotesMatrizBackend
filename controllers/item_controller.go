@@ -2,9 +2,10 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
+	"totesbackend/config"
+	"totesbackend/controllers/utilities"
 	"totesbackend/dtos"
 	"totesbackend/models"
 	"totesbackend/services"
@@ -15,15 +16,19 @@ import (
 
 type ItemController struct {
 	Service *services.ItemService
+	Auth    *utilities.AuthorizationUtil
 }
 
-func NewItemController(service *services.ItemService) *ItemController {
-	return &ItemController{Service: service}
+func NewItemController(service *services.ItemService, auth *utilities.AuthorizationUtil) *ItemController {
+	return &ItemController{Service: service, Auth: auth}
 }
 
 func (ic *ItemController) GetItemByID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_ITEM_BY_ID
+
+	if !ic.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	id := c.Param("id")
 
@@ -54,9 +59,11 @@ func (ic *ItemController) GetItemByID(c *gin.Context) {
 }
 
 func (ic *ItemController) GetAllItems(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_ALL_ITEMS
 
+	if !ic.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 	items, err := ic.Service.GetAllItems()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving items"})
@@ -89,8 +96,11 @@ func (ic *ItemController) GetAllItems(c *gin.Context) {
 }
 
 func (ic *ItemController) SearchItemsByID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_SEARCH_ITEMS_BY_ID
+
+	if !ic.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	query := c.Query("id")
 
@@ -136,8 +146,11 @@ func (ic *ItemController) SearchItemsByID(c *gin.Context) {
 }
 
 func (ic *ItemController) SearchItemsByName(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_SEARCH_ITEMS_BY_NAME
+
+	if !ic.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	query := c.Query("name")
 
@@ -183,8 +196,11 @@ func (ic *ItemController) SearchItemsByName(c *gin.Context) {
 }
 
 func (ic *ItemController) UpdateItemState(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_UPDATE_ITEM_STATE
+
+	if !ic.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	id := c.Param("id")
 
@@ -225,6 +241,12 @@ func (ic *ItemController) UpdateItemState(c *gin.Context) {
 }
 
 func (ic *ItemController) UpdateItem(c *gin.Context) {
+	permissionId := config.PERMISSION_UPDATE_ITEM
+
+	if !ic.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
 	id := c.Param("id") // Obtener el ID del item
 
 	var dto dtos.UpdateItemDTO
@@ -274,6 +296,12 @@ func (ic *ItemController) UpdateItem(c *gin.Context) {
 }
 
 func (ic *ItemController) CreateItem(c *gin.Context) {
+	permissionId := config.PERMISSION_CREATE_ITEM
+
+	if !ic.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
 	var dto dtos.UpdateItemDTO
 	if err := c.ShouldBindJSON(&dto); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format"})

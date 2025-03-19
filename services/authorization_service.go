@@ -12,6 +12,6 @@ func NewAuthorizationService(repo *repositories.AuthorizationRepository) *Author
 	return &AuthorizationService{Repo: repo}
 }
 
-func (s *AuthorizationService) UserHasPermission(email string, permissionID string) (bool, error) {
+func (s *AuthorizationService) UserHasPermission(email string, permissionID int) (bool, error) {
 	return s.Repo.UserHasPermission(email, permissionID)
 }

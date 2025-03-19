@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"totesbackend/config"
+	"totesbackend/controllers/utilities"
 	"totesbackend/models"
 	"totesbackend/services"
 
@@ -14,15 +16,20 @@ import (
 
 type AppointmentController struct {
 	Service *services.AppointmentService
+	Auth    *utilities.AuthorizationUtil
 }
 
-func NewAppointmentController(service *services.AppointmentService) *AppointmentController {
-	return &AppointmentController{Service: service}
+func NewAppointmentController(service *services.AppointmentService, auth *utilities.AuthorizationUtil) *AppointmentController {
+	return &AppointmentController{Service: service, Auth: auth}
 }
 
 func (ac *AppointmentController) GetAppointmentByID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+
+	permissionId := config.PERMISSION_GET_APPOINTMENT_BY_ID
+
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -40,8 +47,12 @@ func (ac *AppointmentController) GetAppointmentByID(c *gin.Context) {
 }
 
 func (ac *AppointmentController) GetAllAppointments(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+
+	permissionId := config.PERMISSION_GET_ALL_APPOINTMENT
+
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	appointments, err := ac.Service.GetAllAppointments()
 	if err != nil {
@@ -95,8 +106,12 @@ func (ac *AppointmentController) SearchAppointmentsByCustomerID(c *gin.Context) 
 }
 
 func (ac *AppointmentController) SearchAppointmentsByState(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+
+	permissionId := config.PERMISSION_SEARCH_APPOINTMENT_BY_STATE
+
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	state, err := strconv.ParseBool(c.Query("state"))
 	if err != nil {
@@ -114,10 +129,15 @@ func (ac *AppointmentController) SearchAppointmentsByState(c *gin.Context) {
 }
 
 func (ac *AppointmentController) GetAppointmentsByCustomerID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
 
-	customerID, err := strconv.Atoi(c.Param("id"))
+	permissionId := config.PERMISSION_GET_APPOINTMENT_BY_CUSTOMER_ID
+
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
+	customerID, err := strconv.Atoi(c.Param("customerID"))
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid customer ID"})
 		return
@@ -133,8 +153,12 @@ func (ac *AppointmentController) GetAppointmentsByCustomerID(c *gin.Context) {
 }
 
 func (ac *AppointmentController) CreateAppointment(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+
+	permissionId := config.PERMISSION_CREATE_APPOINTMENT
+
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	var appointment models.Appointment
 	if err := c.ShouldBindJSON(&appointment); err != nil {
@@ -152,8 +176,12 @@ func (ac *AppointmentController) CreateAppointment(c *gin.Context) {
 }
 
 func (ac *AppointmentController) UpdateAppointment(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+
+	permissionId := config.PERMISSION_UPDATE_APPOINTMENT
+
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

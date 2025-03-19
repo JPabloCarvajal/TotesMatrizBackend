@@ -46,12 +46,12 @@ func RegisterUserTypeRoutes(router *gin.Engine, controller *controllers.UserType
 }
 
 func RegisterUserStateTypeRoutes(router *gin.Engine, controller *controllers.UserStateTypeController) {
-	router.GET("/user-state-type", controller.GetUserStateTypes)
+	router.GET("/user-state-type", controller.GetAllUserStateTypes)
 	router.GET("/user-state-type/:id", controller.GetUserStateTypeByID)
 }
 
 func RegisterIdentifierTypeRoutes(router *gin.Engine, controller *controllers.IdentifierTypeController) {
-	router.GET("/identifier-type", controller.GetIdentifierTypes)
+	router.GET("/identifier-type", controller.GetAllIdentifierTypes)
 	router.GET("/identifier-type/:id", controller.GetIdentifierTypeByID)
 }
 
@@ -101,7 +101,7 @@ func RegisterAuthorizationRoutes(router *gin.Engine, controller *controllers.Aut
 }
 
 func RegisterUserLogRoutes(router *gin.Engine, controller *controllers.UserLogController) {
-	router.GET("/user-log/:id", controller.GetUserLogs)
+	router.GET("/user-log/:id", controller.GetAllLogsFromUser)
 }
 
 func RegisterAppointmentRoutes(router *gin.Engine, controller *controllers.AppointmentController) {
@@ -117,7 +117,7 @@ func RegisterAppointmentRoutes(router *gin.Engine, controller *controllers.Appoi
 
 func RegisterCustomerRoutes(router *gin.Engine, controller *controllers.CustomerController) {
 	router.GET("/customer/:id", controller.GetCustomerByID)
-	router.GET("/customers", controller.GetCustomers)
+	router.GET("/customers", controller.GetAllCustomers)
 	router.GET("/customer/email/:email", controller.GetCustomerByEmail)
 	router.GET("/customer/searchByID", controller.SearchCustomersByID)
 	router.GET("/customer/searchByName", controller.SearchCustomersByName)
@@ -126,7 +126,7 @@ func RegisterCustomerRoutes(router *gin.Engine, controller *controllers.Customer
 }
 
 func RegisterOrderStateTypeRoutes(router *gin.Engine, controller *controllers.OrderStateTypeController) {
-	router.GET("/order-state-type", controller.GetOrderStateTypes)
+	router.GET("/order-state-type", controller.GetAllOrderStateTypes)
 	router.GET("/order-state-type/:id", controller.GetOrderStateTypeByID)
 }
 

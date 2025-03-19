@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"totesbackend/config"
+	"totesbackend/controllers/utilities"
 	"totesbackend/dtos"
 	"totesbackend/models"
 	"totesbackend/services"
@@ -14,15 +16,19 @@ import (
 
 type EmployeeController struct {
 	Service *services.EmployeeService
+	Auth    *utilities.AuthorizationUtil
 }
 
-func NewEmployeeController(service *services.EmployeeService) *EmployeeController {
-	return &EmployeeController{Service: service}
+func NewEmployeeController(service *services.EmployeeService, auth *utilities.AuthorizationUtil) *EmployeeController {
+	return &EmployeeController{Service: service, Auth: auth}
 }
 
 func (ec *EmployeeController) GetEmployeeByID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_EMPLOYEE_BY_ID
+
+	if !ec.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	id := c.Param("id")
 
@@ -46,9 +52,14 @@ func (ec *EmployeeController) GetEmployeeByID(c *gin.Context) {
 	c.JSON(http.StatusOK, employeeDTO)
 }
 
-func (ec *EmployeeController) SearchEmployeesByID(c *gin.Context) {
-	query := c.Query("id")
-	fmt.Println("Searching employees by ID with:", query)
+
+func (ec *EmployeeController) GetAllEmployees(c *gin.Context) {
+	permissionId := config.PERMISSION_GET_ALL_EMPLOYEES
+
+	if !ec.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
 
 	employees, err := ec.Service.SearchEmployeesByID(query)
 	if err != nil {
@@ -79,8 +90,20 @@ func (ec *EmployeeController) SearchEmployeesByID(c *gin.Context) {
 }
 
 func (ec *EmployeeController) SearchEmployeesByName(c *gin.Context) {
-	query := c.Query("name")
-	fmt.Println("Searching employees by name with:", query)
+
+	permissionId := config.PERMISSION_SEARCH_EMPLOYEES_BY_NAME
+
+	if !ec.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
+	query := c.Query("names")
+
+	if query == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Search query is required"})
+		return
+	}
+
 
 	employees, err := ec.Service.SearchEmployeesByName(query)
 	if err != nil {
@@ -110,9 +133,13 @@ func (ec *EmployeeController) SearchEmployeesByName(c *gin.Context) {
 	c.JSON(http.StatusOK, employeesDTO)
 }
 
-func (ec *EmployeeController) GetAllEmployees(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+
+func (ec *EmployeeController) CreateEmployee(c *gin.Context) {
+	permissionId := config.PERMISSION_CREATE_EMPLOYEE
+
+	if !ec.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	employees, err := ec.Service.GetAllEmployees()
 	if err != nil {
@@ -178,9 +205,11 @@ func (ec *EmployeeController) CreateEmployee(c *gin.Context) {
 }
 
 func (ec *EmployeeController) UpdateEmployee(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_UPDATE_EMPLOYEE
 
+	if !ec.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 	id := c.Param("id")
 
 	var dto dtos.UpdateEmployeeDTO
