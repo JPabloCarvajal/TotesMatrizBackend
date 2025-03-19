@@ -4,6 +4,7 @@ import (
 	"time"
 	"totesbackend/config"
 	"totesbackend/controllers"
+	"totesbackend/controllers/utilities"
 	"totesbackend/database"
 	"totesbackend/repositories"
 	routes "totesbackend/router"
@@ -16,6 +17,7 @@ import (
 
 var db *gorm.DB
 var router *gin.Engine
+var authUtil *utilities.AuthorizationUtil
 
 func SetupAndRunApp() error {
 	// load env
@@ -34,6 +36,8 @@ func SetupAndRunApp() error {
 	defer database.ClosePostgres()
 
 	db = database.GetDB()
+	authUtil = utilities.NewAuthorizationUtil(services.NewAuthorizationService(repositories.NewAuthorizationRepository(db)))
+
 	router = gin.Default()
 	database.MigrateDB() // recordar descomentar para inicializar la base de datos
 
@@ -73,84 +77,84 @@ func SetupAndRunApp() error {
 func setUpPermissionRouter() {
 	permissionRepo := repositories.NewPermissionRepository(db)
 	permissionService := services.NewPermissionService(permissionRepo)
-	permissionController := controllers.NewPermissionController(permissionService)
+	permissionController := controllers.NewPermissionController(permissionService, authUtil)
 	routes.RegisterPermissionRoutes(router, permissionController)
 }
 
 func setUpEmployeeRouter() {
 	employeeRepo := repositories.NewEmployeeRepository(db)
 	employeeService := services.NewEmployeeService(employeeRepo)
-	employeeController := controllers.NewEmployeeController(employeeService)
+	employeeController := controllers.NewEmployeeController(employeeService, authUtil)
 	routes.RegisterEmployeeRoutes(router, employeeController)
 }
 
 func setUpRoleRouter() {
 	roleRepo := repositories.NewRoleRepository(db)
 	roleService := services.NewRoleService(roleRepo)
-	roleController := controllers.NewRoleController(roleService)
+	roleController := controllers.NewRoleController(roleService, authUtil)
 	routes.RegisterRoleRoutes(router, roleController)
 }
 
 func setUpItemTypeRouter() {
 	itemTypeRepo := repositories.NewItemTypeRepository(db)
 	itemTypeService := services.NewItemTypeService(itemTypeRepo)
-	itemTypeController := controllers.NewItemTypeController(itemTypeService)
+	itemTypeController := controllers.NewItemTypeController(itemTypeService, authUtil)
 	routes.RegisterItemTypeRoutes(router, itemTypeController)
 }
 
 func setUpUserTypeRouter() {
 	userTypeRepo := repositories.NewUserTypeRepository(db)
 	userTypeService := services.NewUserTypeService(userTypeRepo)
-	userTypeController := controllers.NewUserTypeController(userTypeService)
+	userTypeController := controllers.NewUserTypeController(userTypeService, authUtil)
 	routes.RegisterUserTypeRoutes(router, userTypeController)
 }
 
 func setUpItemRouter() {
 	itemRepo := repositories.NewItemRepository(db)
 	itemService := services.NewItemService(itemRepo)
-	itemController := controllers.NewItemController(itemService)
+	itemController := controllers.NewItemController(itemService, authUtil)
 	routes.RegisterItemRoutes(router, itemController)
 }
 
 func setUpUserStateTypeRouter() {
 	userStateTypeRepo := repositories.NewUserStateTypeRepository(db)
 	userStateTypeService := services.NewUserStateTypeService(userStateTypeRepo)
-	userStateTypeController := controllers.NewUserStateTypeController(userStateTypeService)
+	userStateTypeController := controllers.NewUserStateTypeController(userStateTypeService, authUtil)
 	routes.RegisterUserStateTypeRoutes(router, userStateTypeController)
 }
 
 func setUpIdentifierTypeRouter() {
 	identifierTypeRepo := repositories.NewIdentifierTypeRepository(db)
 	identifierTypeService := services.NewIdentifierTypeService(identifierTypeRepo)
-	identifierTypeController := controllers.NewIdentifierTypeController(identifierTypeService)
+	identifierTypeController := controllers.NewIdentifierTypeController(identifierTypeService, authUtil)
 	routes.RegisterIdentifierTypeRoutes(router, identifierTypeController)
 }
 
 func setUpUserRouter() {
 	userRepo := repositories.NewUserRepository(db)
 	userService := services.NewUserService(userRepo)
-	userController := controllers.NewUserController(userService)
+	userController := controllers.NewUserController(userService, authUtil)
 	routes.RegisterUserRoutes(router, userController)
 }
 
 func setUpAdditionalExpenseRouter() {
 	addRepo := repositories.NewAdditionalExpenseRepository(db)
 	addService := services.NewAdditionalExpenseService(addRepo)
-	addController := controllers.NewAdditionalExpenseController(addService)
+	addController := controllers.NewAdditionalExpenseController(addService, authUtil)
 	routes.RegisterAdditionalExpenseRoutes(router, addController)
 }
 
 func setUpHistoricalItemPriceRouter() {
 	hisRepo := repositories.NewHistoricalItemPriceRepository(db)
 	hisService := services.NewHistoricalItemPriceService(hisRepo)
-	hisController := controllers.NewHistoricalItemPriceController(hisService)
+	hisController := controllers.NewHistoricalItemPriceController(hisService, authUtil)
 	routes.RegisterHistoricalItemPriceRoutes(router, hisController)
 }
 
 func setUpCommentRouter() {
 	commentRepo := repositories.NewCommentRepository(db)
 	commentService := services.NewCommentService(commentRepo)
-	commentController := controllers.NewCommentController(commentService)
+	commentController := controllers.NewCommentController(commentService, authUtil)
 	routes.RegisterCommentRoutes(router, commentController)
 }
 
@@ -164,21 +168,21 @@ func setUpAuthRouter() {
 func setUpUserLogRouter() {
 	userLogRepo := repositories.NewUserLogRepository(db)
 	userLogService := services.NewUserLogService(userLogRepo)
-	userLogController := controllers.NewUserLogController(userLogService)
+	userLogController := controllers.NewUserLogController(userLogService, authUtil)
 	routes.RegisterUserLogRoutes(router, userLogController)
 }
 
 func setUpAppointmentRouter() {
 	appointmentRepo := repositories.NewAppointmentRepository(db)
 	appointmentService := services.NewAppointmentService(appointmentRepo)
-	appointmentController := controllers.NewAppointmentController(appointmentService)
+	appointmentController := controllers.NewAppointmentController(appointmentService, authUtil)
 	routes.RegisterAppointmentRoutes(router, appointmentController)
 }
 
 func setUpCustomerRouter() {
 	customerRepo := repositories.NewCustomerRepository(db)
 	customerService := services.NewCustomerService(customerRepo)
-	customerController := controllers.NewCustomerController(customerService)
+	customerController := controllers.NewCustomerController(customerService, authUtil)
 	routes.RegisterCustomerRoutes(router, customerController)
 
 }
@@ -186,13 +190,13 @@ func setUpCustomerRouter() {
 func setUpOrderStateTypeRouter() {
 	orderStateTypeRepo := repositories.NewOrderStateTypeRepository(db)
 	orderStateTypeService := services.NewOrderStateTypeService(orderStateTypeRepo)
-	orderStateTypeController := controllers.NewOrderStateTypeController(orderStateTypeService)
+	orderStateTypeController := controllers.NewOrderStateTypeController(orderStateTypeService, authUtil)
 	routes.RegisterOrderStateTypeRoutes(router, orderStateTypeController)
 }
 
 func setUpPurchaseOrderRouter() {
 	purchaseOrderRepo := repositories.NewPurchaseOrderRepository(db)
 	purchaseOrderService := services.NewPurchaseOrderService(purchaseOrderRepo)
-	purchaseOrderController := controllers.NewPurchaseOrderController(purchaseOrderService)
+	purchaseOrderController := controllers.NewPurchaseOrderController(purchaseOrderService, authUtil)
 	routes.RegisterPurchaseOrderRoutes(router, purchaseOrderController)
 }

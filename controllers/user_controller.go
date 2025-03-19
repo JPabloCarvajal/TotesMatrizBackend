@@ -2,9 +2,10 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
+	"totesbackend/config"
+	"totesbackend/controllers/utilities"
 	"totesbackend/dtos"
 	"totesbackend/models"
 	"totesbackend/services"
@@ -15,15 +16,19 @@ import (
 
 type UserController struct {
 	Service *services.UserService
+	Auth    *utilities.AuthorizationUtil
 }
 
-func NewUserController(service *services.UserService) *UserController {
-	return &UserController{Service: service}
+func NewUserController(service *services.UserService, auth *utilities.AuthorizationUtil) *UserController {
+	return &UserController{Service: service, Auth: auth}
 }
 
 func (uc *UserController) GetUserByID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_USER_BY_ID
+
+	if !uc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	id := c.Param("id")
 
@@ -46,8 +51,11 @@ func (uc *UserController) GetUserByID(c *gin.Context) {
 }
 
 func (uc *UserController) GetAllUsers(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_ALL_USERS
+
+	if !uc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	users, err := uc.Service.GetAllUsers()
 	if err != nil {
@@ -74,8 +82,11 @@ func (uc *UserController) GetAllUsers(c *gin.Context) {
 }
 
 func (uc *UserController) SearchUsersByID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_SEARCH_USER_BY_ID
+
+	if !uc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	query := c.Query("id")
 
@@ -113,8 +124,11 @@ func (uc *UserController) SearchUsersByID(c *gin.Context) {
 }
 
 func (uc *UserController) SearchUsersByEmail(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_SEARCH_USERS_BY_EMAIL
+
+	if !uc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	query := c.Query("email")
 
@@ -152,8 +166,11 @@ func (uc *UserController) SearchUsersByEmail(c *gin.Context) {
 }
 
 func (uc *UserController) UpdateUserState(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_UPDATE_USER_STATE
+
+	if !uc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	id := c.Param("id")
 
@@ -185,8 +202,11 @@ func (uc *UserController) UpdateUserState(c *gin.Context) {
 }
 
 func (uc *UserController) UpdateUser(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_UPDATE_USER
+
+	if !uc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	id := c.Param("id")
 
@@ -230,8 +250,11 @@ func (uc *UserController) UpdateUser(c *gin.Context) {
 }
 
 func (uc *UserController) CreateUser(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_CREATE_USER
+
+	if !uc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	var dto dtos.CreateUserDTO
 	if err := c.ShouldBindJSON(&dto); err != nil {

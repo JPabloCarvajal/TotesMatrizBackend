@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"totesbackend/config"
+	"totesbackend/controllers/utilities"
 	"totesbackend/dtos"
 	"totesbackend/models"
 	"totesbackend/services"
@@ -13,14 +15,20 @@ import (
 
 type CustomerController struct {
 	Service *services.CustomerService
+	Auth    *utilities.AuthorizationUtil
 }
 
-func NewCustomerController(service *services.CustomerService) *CustomerController {
-	return &CustomerController{Service: service}
+func NewCustomerController(service *services.CustomerService, auth *utilities.AuthorizationUtil) *CustomerController {
+	return &CustomerController{Service: service, Auth: auth}
 }
 
-// Obtener todos los clientes
-func (cc *CustomerController) GetCustomers(c *gin.Context) {
+func (cc *CustomerController) GetAllCustomers(c *gin.Context) {
+	permissionId := config.PERMISSION_GET_ALL_CUSTOMERS
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
 	customers, err := cc.Service.GetAllCustomers()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving customers"})
@@ -29,8 +37,13 @@ func (cc *CustomerController) GetCustomers(c *gin.Context) {
 	c.JSON(http.StatusOK, customers)
 }
 
-// Obtener cliente por ID
 func (cc *CustomerController) GetCustomerByID(c *gin.Context) {
+
+	permissionId := config.PERMISSION_GET_CUSTOMER_BY_ID
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid customer ID"})
@@ -46,8 +59,13 @@ func (cc *CustomerController) GetCustomerByID(c *gin.Context) {
 	c.JSON(http.StatusOK, customer)
 }
 
-// Crear un cliente
 func (cc *CustomerController) CreateCustomer(c *gin.Context) {
+	permissionId := config.PERMISSION_CREATE_CUSTOMER
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
 	var dto dtos.CreateCustomerDTO
 	if err := c.ShouldBindJSON(&dto); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format"})
@@ -75,8 +93,13 @@ func (cc *CustomerController) CreateCustomer(c *gin.Context) {
 	c.JSON(http.StatusCreated, createdCustomer)
 }
 
-// Actualizar un cliente
 func (cc *CustomerController) UpdateCustomer(c *gin.Context) {
+	permissionId := config.PERMISSION_UPDATE_CUSTOMER
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid customer ID"})
@@ -112,6 +135,12 @@ func (cc *CustomerController) UpdateCustomer(c *gin.Context) {
 }
 
 func (cc *CustomerController) GetCustomerByEmail(c *gin.Context) {
+	permissionId := config.PERMISSION_GET_CUSTOMER_BY_EMAIL
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
 	username := c.GetHeader("Username")
 	fmt.Println("Request made by user:", username)
 

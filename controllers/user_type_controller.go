@@ -3,6 +3,8 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"totesbackend/config"
+	"totesbackend/controllers/utilities"
 	"totesbackend/dtos"
 	"totesbackend/services"
 
@@ -11,15 +13,19 @@ import (
 
 type UserTypeController struct {
 	Service *services.UserTypeService
+	Auth    *utilities.AuthorizationUtil
 }
 
-func NewUserTypeController(service *services.UserTypeService) *UserTypeController {
-	return &UserTypeController{Service: service}
+func NewUserTypeController(service *services.UserTypeService, auth *utilities.AuthorizationUtil) *UserTypeController {
+	return &UserTypeController{Service: service, Auth: auth}
 }
 
 func (utc *UserTypeController) GetUserTypeByID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_USER_TYPE_BY_ID
+
+	if !utc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	idParam := c.Param("id")
 	var id uint
@@ -56,8 +62,11 @@ func (utc *UserTypeController) GetUserTypeByID(c *gin.Context) {
 }
 
 func (utc *UserTypeController) GetAllUserTypes(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_ALL_USER_TYPES
+
+	if !utc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	userTypes, err := utc.Service.ObtainAllUserTypes()
 	if err != nil {
@@ -91,8 +100,11 @@ func (utc *UserTypeController) GetAllUserTypes(c *gin.Context) {
 }
 
 func (utc *UserTypeController) ExistsUserType(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_EXIST_USER_TYPE
+
+	if !utc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	idParam := c.Param("id")
 	var id uint

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 
 	"totesbackend/services"
 
@@ -19,13 +20,19 @@ func NewAuthorizationController(service *services.AuthorizationService) *Authori
 func (ac *AuthorizationController) CheckUserPermission(c *gin.Context) {
 	email := c.Query("email")
 	permissionID := c.Query("permission_id")
+	permissionStr, err := strconv.Atoi(permissionID)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Permission ID"})
+		return
+	}
 
 	if email == "" || permissionID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Email and permission_id are required"})
 		return
 	}
 
-	hasPermission, err := ac.Service.UserHasPermission(email, permissionID)
+	hasPermission, err := ac.Service.UserHasPermission(email, permissionStr)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error checking permission"})
 		return

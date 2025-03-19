@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
+	"totesbackend/config"
+	"totesbackend/controllers/utilities"
 	"totesbackend/services"
 
 	"github.com/gin-gonic/gin"
@@ -10,15 +11,19 @@ import (
 
 type IdentifierTypeController struct {
 	Service *services.IdentifierTypeService
+	Auth    *utilities.AuthorizationUtil
 }
 
-func NewIdentifierTypeController(service *services.IdentifierTypeService) *IdentifierTypeController {
-	return &IdentifierTypeController{Service: service}
+func NewIdentifierTypeController(service *services.IdentifierTypeService, auth *utilities.AuthorizationUtil) *IdentifierTypeController {
+	return &IdentifierTypeController{Service: service, Auth: auth}
 }
 
-func (itc *IdentifierTypeController) GetIdentifierTypes(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+func (itc *IdentifierTypeController) GetAllIdentifierTypes(c *gin.Context) {
+	permissionId := config.PERMISSION_GET_ALL_IDENTIFIER_TYPES
+
+	if !itc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	identifierTypes, err := itc.Service.GetAllIdentifierTypes()
 	if err != nil {
@@ -29,8 +34,11 @@ func (itc *IdentifierTypeController) GetIdentifierTypes(c *gin.Context) {
 }
 
 func (itc *IdentifierTypeController) GetIdentifierTypeByID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_IDENTIFIER_TYPE_BY_ID
+
+	if !itc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	id := c.Param("id")
 

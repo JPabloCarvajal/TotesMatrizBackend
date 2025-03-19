@@ -3,6 +3,8 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"totesbackend/config"
+	"totesbackend/controllers/utilities"
 	"totesbackend/services"
 
 	"github.com/gin-gonic/gin"
@@ -10,16 +12,19 @@ import (
 
 type PermissionController struct {
 	Service *services.PermissionService
+	Auth    *utilities.AuthorizationUtil
 }
 
-func NewPermissionController(service *services.PermissionService) *PermissionController {
-	return &PermissionController{Service: service}
+func NewPermissionController(service *services.PermissionService, auth *utilities.AuthorizationUtil) *PermissionController {
+	return &PermissionController{Service: service, Auth: auth}
 }
 
 func (pc *PermissionController) GetPermissionByID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_PERMISSION_BY_ID
 
+	if !pc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 	idParam := c.Param("id")
 	var id uint
 	if _, err := fmt.Sscanf(idParam, "%d", &id); err != nil {
@@ -37,8 +42,11 @@ func (pc *PermissionController) GetPermissionByID(c *gin.Context) {
 }
 
 func (pc *PermissionController) GetAllPermissions(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_ALL_PERMISSIONS
+
+	if !pc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	permissions, err := pc.Service.GetAllPermissions()
 	if err != nil {

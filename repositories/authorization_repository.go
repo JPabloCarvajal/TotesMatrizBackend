@@ -12,7 +12,7 @@ func NewAuthorizationRepository(db *gorm.DB) *AuthorizationRepository {
 	return &AuthorizationRepository{DB: db}
 }
 
-func (r *AuthorizationRepository) UserHasPermission(email string, permissionID string) (bool, error) {
+func (r *AuthorizationRepository) UserHasPermission(email string, permissionID int) (bool, error) {
 	var count int64
 	err := r.DB.Table("users").
 		Joins("JOIN user_types ON users.user_type_id = user_types.id").

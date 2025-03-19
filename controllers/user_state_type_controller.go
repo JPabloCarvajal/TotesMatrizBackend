@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
+	"totesbackend/config"
+	"totesbackend/controllers/utilities"
 	"totesbackend/services"
 
 	"github.com/gin-gonic/gin"
@@ -10,15 +11,19 @@ import (
 
 type UserStateTypeController struct {
 	Service *services.UserStateTypeService
+	Auth    *utilities.AuthorizationUtil
 }
 
-func NewUserStateTypeController(service *services.UserStateTypeService) *UserStateTypeController {
-	return &UserStateTypeController{Service: service}
+func NewUserStateTypeController(service *services.UserStateTypeService, auth *utilities.AuthorizationUtil) *UserStateTypeController {
+	return &UserStateTypeController{Service: service, Auth: auth}
 }
 
 func (ustc *UserStateTypeController) GetUserStateTypeByID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_GET_USER_STATE_TYPE_BY_ID
+
+	if !ustc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	id := c.Param("id")
 
@@ -31,9 +36,12 @@ func (ustc *UserStateTypeController) GetUserStateTypeByID(c *gin.Context) {
 	c.JSON(http.StatusOK, userStateType)
 }
 
-func (ustc *UserStateTypeController) GetUserStateTypes(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+func (ustc *UserStateTypeController) GetAllUserStateTypes(c *gin.Context) {
+	permissionId := config.PERMISSION_GET_ALL_USER_STATE_TYPES
+
+	if !ustc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	userStateTypes, err := ustc.Service.GetAllUserStateTypes()
 	if err != nil {
