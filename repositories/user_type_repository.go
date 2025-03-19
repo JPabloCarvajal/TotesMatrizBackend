@@ -16,16 +16,16 @@ func NewUserTypeRepository(db *gorm.DB) *UserTypeRepository {
 
 func (r *UserTypeRepository) ObtainAllUserTypes() ([]models.UserType, error) {
 	var userTypes []models.UserType
-	err := r.DB.Find(&userTypes).Error
+	err := r.DB.Preload("Roles").Find(&userTypes).Error
 	if err != nil {
 		return nil, err
 	}
 	return userTypes, nil
 }
 
-func (r *UserTypeRepository) ObtainUserTypeByID(id uint) (*models.UserType, error) {
+func (r *UserTypeRepository) GetUserTypeByID(id uint) (*models.UserType, error) {
 	var userType models.UserType
-	err := r.DB.First(&userType, id).Error
+	err := r.DB.Preload("Roles").First(&userType, "id = ?", id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -50,4 +50,26 @@ func (r *UserTypeRepository) GetRolesForUserType(userTypeID uint) ([]uint, error
 		return nil, err
 	}
 	return roleIDs, nil
+}
+
+func (r *UserTypeRepository) SearchUserTypesByID(query string) ([]models.UserType, error) {
+	var userTypes []models.UserType
+	err := r.DB.Preload("Roles").
+		Where("CAST(id AS TEXT) LIKE ?", query+"%").
+		Find(&userTypes).Error
+	if err != nil {
+		return nil, err
+	}
+	return userTypes, nil
+}
+
+func (r *UserTypeRepository) SearchUserTypesByName(query string) ([]models.UserType, error) {
+	var userTypes []models.UserType
+	err := r.DB.Preload("Roles").
+		Where("LOWER(name) LIKE LOWER(?)", query+"%").
+		Find(&userTypes).Error
+	if err != nil {
+		return nil, err
+	}
+	return userTypes, nil
 }

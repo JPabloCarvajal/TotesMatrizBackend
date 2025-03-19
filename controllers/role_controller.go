@@ -122,3 +122,31 @@ func (rc *RoleController) ExistRole(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"exists": exists})
 }
+
+func (rc *RoleController) SearchRolesByID(c *gin.Context) {
+	username := c.GetHeader("Username")
+	fmt.Println("Request made by user:", username)
+
+	query := c.Query("id")
+	roles, err := rc.Service.SearchRolesByID(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error searching roles by ID"})
+		return
+	}
+
+	c.JSON(http.StatusOK, roles)
+}
+
+func (rc *RoleController) SearchRolesByName(c *gin.Context) {
+	username := c.GetHeader("Username")
+	fmt.Println("Request made by user:", username)
+
+	query := c.Query("name")
+	roles, err := rc.Service.SearchRolesByName(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error searching roles by name"})
+		return
+	}
+
+	c.JSON(http.StatusOK, roles)
+}

@@ -222,3 +222,67 @@ func (cc *CommentController) UpdateComment(c *gin.Context) {
 
 	c.JSON(http.StatusOK, updatedCommentDTO)
 }
+
+func (cc *CommentController) SearchCommentsByID(c *gin.Context) {
+	query := c.Query("query")
+	fmt.Println("Searching comments by ID with:", query)
+
+	comments, err := cc.Service.SearchCommentsByID(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving comments"})
+		return
+	}
+
+	if len(comments) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "No comments found"})
+		return
+	}
+
+	var commentsDTO []dtos.GetCommentDTO
+	for _, comment := range comments {
+		commentsDTO = append(commentsDTO, dtos.GetCommentDTO{
+			ID:             comment.ID,
+			Name:           comment.Name,
+			LastName:       comment.LastName,
+			Email:          comment.Email,
+			Phone:          comment.Phone,
+			ResidenceState: comment.ResidenceState,
+			ResidenceCity:  comment.ResidenceCity,
+			Comment:        comment.Comment,
+		})
+	}
+
+	c.JSON(http.StatusOK, commentsDTO)
+}
+
+func (cc *CommentController) SearchCommentsByName(c *gin.Context) {
+	query := c.Query("name")
+	fmt.Println("Searching comments by name with:", query)
+
+	comments, err := cc.Service.SearchCommentsByName(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving comments"})
+		return
+	}
+
+	if len(comments) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "No comments found"})
+		return
+	}
+
+	var commentsDTO []dtos.GetCommentDTO
+	for _, comment := range comments {
+		commentsDTO = append(commentsDTO, dtos.GetCommentDTO{
+			ID:             comment.ID,
+			Name:           comment.Name,
+			LastName:       comment.LastName,
+			Email:          comment.Email,
+			Phone:          comment.Phone,
+			ResidenceState: comment.ResidenceState,
+			ResidenceCity:  comment.ResidenceCity,
+			Comment:        comment.Comment,
+		})
+	}
+
+	c.JSON(http.StatusOK, commentsDTO)
+}

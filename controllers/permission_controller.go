@@ -56,3 +56,35 @@ func (pc *PermissionController) GetAllPermissions(c *gin.Context) {
 
 	c.JSON(http.StatusOK, permissions)
 }
+
+func (pc *PermissionController) SearchPermissionsByID(c *gin.Context) {
+	query := c.Query("id")
+	if query == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Search query is required"})
+		return
+	}
+
+	permissions, err := pc.Service.SearchPermissionsByID(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving permissions"})
+		return
+	}
+
+	c.JSON(http.StatusOK, permissions)
+}
+
+func (pc *PermissionController) SearchPermissionsByName(c *gin.Context) {
+	query := c.Query("name")
+	if query == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Search query is required"})
+		return
+	}
+
+	permissions, err := pc.Service.SearchPermissionsByName(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving permissions"})
+		return
+	}
+
+	c.JSON(http.StatusOK, permissions)
+}

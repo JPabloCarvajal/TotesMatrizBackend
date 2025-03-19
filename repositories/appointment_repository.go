@@ -63,3 +63,21 @@ func (r *AppointmentRepository) UpdateAppointment(appointment *models.Appointmen
 	}
 	return nil
 }
+
+func (r *AppointmentRepository) SearchAppointmentsByID(query string) ([]models.Appointment, error) {
+	var appointments []models.Appointment
+	err := r.DB.Where("CAST(id AS TEXT) LIKE ?", query+"%").Find(&appointments).Error
+	if err != nil {
+		return nil, err
+	}
+	return appointments, nil
+}
+
+func (r *AppointmentRepository) SearchAppointmentsByCustomerID(query string) ([]models.Appointment, error) {
+	var appointments []models.Appointment
+	err := r.DB.Where("CAST(customer_id AS TEXT) LIKE ?", query+"%").Find(&appointments).Error
+	if err != nil {
+		return nil, err
+	}
+	return appointments, nil
+}
