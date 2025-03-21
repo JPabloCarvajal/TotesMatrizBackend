@@ -122,8 +122,12 @@ func (utc *UserTypeController) ExistsUserType(c *gin.Context) {
 }
 
 func (utc *UserTypeController) SearchUserTypesByID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+
+	permissionId := config.PERMISSION_SEARCH_USER_TYPES_BY_ID
+
+	if !utc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	query := c.Query("id")
 	userTypes, err := utc.Service.SearchUserTypesByID(query)
@@ -154,8 +158,12 @@ func (utc *UserTypeController) SearchUserTypesByID(c *gin.Context) {
 }
 
 func (utc *UserTypeController) SearchUserTypesByName(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+
+	permissionId := config.PERMISSION_SEARCH_USER_TYPES_BY_NAME
+
+	if !utc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	query := c.Query("name")
 	userTypes, err := utc.Service.SearchUserTypesByName(query)

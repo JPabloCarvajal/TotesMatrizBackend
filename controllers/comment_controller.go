@@ -24,7 +24,7 @@ func NewCommentController(service *services.CommentService, auth *utilities.Auth
 }
 
 func (cc *CommentController) GetCommentByID(c *gin.Context) {
-	permissionId := config.PERMISSION_GET_PERMISSION_BY_ID
+	permissionId := config.PERMISSION_GET_COMMENT_BY_ID
 
 	if !cc.Auth.CheckPermission(c, permissionId) {
 		return
@@ -224,8 +224,13 @@ func (cc *CommentController) UpdateComment(c *gin.Context) {
 }
 
 func (cc *CommentController) SearchCommentsByID(c *gin.Context) {
-	query := c.Query("query")
-	fmt.Println("Searching comments by ID with:", query)
+	query := c.Query("id")
+
+	permissionId := config.PERMISSION_SEARCH_COMMENTS_BY_ID
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	comments, err := cc.Service.SearchCommentsByID(query)
 	if err != nil {
@@ -257,7 +262,12 @@ func (cc *CommentController) SearchCommentsByID(c *gin.Context) {
 
 func (cc *CommentController) SearchCommentsByName(c *gin.Context) {
 	query := c.Query("name")
-	fmt.Println("Searching comments by name with:", query)
+
+	permissionId := config.PERMISSION_SEARCH_COMMENTS_BY_NAME
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	comments, err := cc.Service.SearchCommentsByName(query)
 	if err != nil {
