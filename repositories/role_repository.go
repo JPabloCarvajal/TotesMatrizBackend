@@ -16,7 +16,7 @@ func NewRoleRepository(db *gorm.DB) *RoleRepository {
 
 func (r *RoleRepository) GetAllRoles() ([]models.Role, error) {
 	var roles []models.Role
-	err := r.DB.Find(&roles).Error
+	err := r.DB.Preload("Permissions").Find(&roles).Error
 	if err != nil {
 		return nil, err
 	}

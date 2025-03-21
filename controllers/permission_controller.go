@@ -58,6 +58,11 @@ func (pc *PermissionController) GetAllPermissions(c *gin.Context) {
 }
 
 func (pc *PermissionController) SearchPermissionsByID(c *gin.Context) {
+	permissionId := config.PERMISSION_SEARCH_PERMISSION_BY_ID
+
+	if !pc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 	query := c.Query("id")
 	if query == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Search query is required"})
@@ -74,6 +79,13 @@ func (pc *PermissionController) SearchPermissionsByID(c *gin.Context) {
 }
 
 func (pc *PermissionController) SearchPermissionsByName(c *gin.Context) {
+
+	permissionId := config.PERMISSION_SEARCH_PERMISSION_BY_NAME
+
+	if !pc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
 	query := c.Query("name")
 	if query == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Search query is required"})

@@ -48,7 +48,7 @@ func (ac *AppointmentController) GetAppointmentByID(c *gin.Context) {
 
 func (ac *AppointmentController) GetAllAppointments(c *gin.Context) {
 
-	permissionId := config.PERMISSION_GET_ALL_APPOINTMENT
+	permissionId := config.PERMISSION_GET_ALL_APPOINTMENTS
 
 	if !ac.Auth.CheckPermission(c, permissionId) {
 		return
@@ -64,8 +64,11 @@ func (ac *AppointmentController) GetAllAppointments(c *gin.Context) {
 }
 
 func (ac *AppointmentController) SearchAppointmentsByID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_SEARCH_APPOINTMENTS_BY_ID
+
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	query := c.Query("id")
 	fmt.Println("Searching appointments by ID with:", query)
@@ -85,8 +88,11 @@ func (ac *AppointmentController) SearchAppointmentsByID(c *gin.Context) {
 }
 
 func (ac *AppointmentController) SearchAppointmentsByCustomerID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_SEARCH_APPOINTMENTS_BY_NAME
+
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	query := c.Query("id")
 	fmt.Println("Searching appointments by Customer ID with:", query)

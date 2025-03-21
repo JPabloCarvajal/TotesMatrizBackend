@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"totesbackend/config"
@@ -22,14 +21,12 @@ func NewCustomerController(service *services.CustomerService, auth *utilities.Au
 	return &CustomerController{Service: service, Auth: auth}
 }
 
-
 func (cc *CustomerController) GetAllCustomers(c *gin.Context) {
 	permissionId := config.PERMISSION_GET_ALL_CUSTOMERS
 
 	if !cc.Auth.CheckPermission(c, permissionId) {
 		return
 	}
-
 
 	customers, err := cc.Service.GetAllCustomers()
 	if err != nil {
@@ -144,9 +141,6 @@ func (cc *CustomerController) GetCustomerByEmail(c *gin.Context) {
 		return
 	}
 
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
-
 	email := c.Param("email")
 
 	customer, err := cc.Service.GetCustomerByEmail(email)
@@ -159,11 +153,13 @@ func (cc *CustomerController) GetCustomerByEmail(c *gin.Context) {
 }
 
 func (cc *CustomerController) SearchCustomersByID(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_SEARCH_CUSTOMERS_BY_ID
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	query := c.Query("id")
-	fmt.Println("Searching customers by ID with:", query)
 
 	customers, err := cc.Service.SearchCustomersByID(query)
 	if err != nil {
@@ -196,11 +192,13 @@ func (cc *CustomerController) SearchCustomersByID(c *gin.Context) {
 }
 
 func (cc *CustomerController) SearchCustomersByName(c *gin.Context) {
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
+	permissionId := config.PERMISSION_SEARCH_CUSTOMERS_BY_NAME
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	query := c.Query("name")
-	fmt.Println("Searching customers by name with:", query)
 
 	customers, err := cc.Service.SearchCustomersByName(query)
 	if err != nil {

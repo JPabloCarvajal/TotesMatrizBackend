@@ -32,7 +32,7 @@ func RegisterRoleRoutes(router *gin.Engine, controller *controllers.RoleControll
 	router.GET("/role/:id", controller.GetRoleByID)
 	router.GET("/role/:id/permission", controller.GetAllPermissionsOfRole)
 	router.GET("/role/:id/exist", controller.ExistRole)
-	router.GET("/role/", controller.GetAllRoles)
+	router.GET("/role", controller.GetAllRoles)
 	router.GET("/role/searchByID", controller.SearchRolesByID)
 	router.GET("/role/searchByName", controller.SearchRolesByName)
 }
