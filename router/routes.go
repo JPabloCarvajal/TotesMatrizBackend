@@ -26,15 +26,17 @@ func RegisterPermissionRoutes(router *gin.Engine,
 
 	router.GET("/permission", controller.GetAllPermissions)
 	router.GET("/permission/:id", controller.GetPermissionByID)
-
+	router.GET("/permission/searchByID", controller.SearchPermissionsByID)
+	router.GET("/permission/searchByName", controller.SearchPermissionsByName)
 }
 
-func RegisterRoleRoutes(router *gin.Engine,
-	controller *controllers.RoleController) {
-	router.GET("/roles/:id", controller.GetRoleByID)
-	router.GET("/roles/:id/permission", controller.GetAllPermissionsOfRole)
-	router.GET("/roles/:id/exist", controller.ExistRole)
-	router.GET("/roles", controller.GetAllRoles)
+func RegisterRoleRoutes(router *gin.Engine, controller *controllers.RoleController) {
+	router.GET("/role/:id", controller.GetRoleByID)
+	router.GET("/role/:id/permission", controller.GetAllPermissionsOfRole)
+	router.GET("/role/:id/exist", controller.ExistRole)
+	router.GET("/role", controller.GetAllRoles)
+	router.GET("/role/searchByID", controller.SearchRolesByID)
+	router.GET("/role/searchByName", controller.SearchRolesByName)
 }
 
 func RegisterUserTypeRoutes(router *gin.Engine,
@@ -42,6 +44,8 @@ func RegisterUserTypeRoutes(router *gin.Engine,
 	router.GET("/user-types", controller.GetAllUserTypes)
 	router.GET("/user-types/:id", controller.GetUserTypeByID)
 	router.GET("/user-types/:id/exists", controller.ExistsUserType)
+	router.GET("/user-types/searchByID", controller.SearchUserTypesByID)
+	router.GET("/user-types/searchByName", controller.SearchUserTypesByName)
 }
 
 func RegisterUserStateTypeRoutes(router *gin.Engine,
@@ -67,12 +71,12 @@ func RegisterUserRoutes(router *gin.Engine,
 }
 
 func RegisterEmployeeRoutes(router *gin.Engine, controller *controllers.EmployeeController) {
-	router.GET("/employee/", controller.GetAllEmployees)
 	router.GET("/employee/:id", controller.GetEmployeeByID)
-	router.GET("/employee/searchEmployeesByName", controller.SearchEmployeesByName)
-	router.POST("/employee/", controller.CreateEmployee)
+	router.GET("/employee", controller.GetAllEmployees)
+	router.GET("/employee/searchByID", controller.SearchEmployeesByID)
+	router.GET("/employee/searchByName", controller.SearchEmployeesByName)
+	router.POST("/employee", controller.CreateEmployee)
 	router.PUT("/employee/:id", controller.UpdateEmployee)
-
 }
 
 func RegisterAdditionalExpenseRoutes(router *gin.Engine,
@@ -91,8 +95,10 @@ func RegisterHistoricalItemPriceRoutes(router *gin.Engine, controller *controlle
 func RegisterCommentRoutes(router *gin.Engine,
 	controller *controllers.CommentController) {
 	router.GET("/comment/:id", controller.GetCommentByID)
-	router.GET("/comment", controller.GetAllComments)
-	router.GET("/comment/searchByEmail", controller.SearchCommentsByEmail)
+	router.GET("/comments", controller.GetAllComments)
+	router.GET("/comments/searchByID", controller.SearchCommentsByID)
+	router.GET("/comments/searchByName", controller.SearchCommentsByName)
+	router.GET("/comments/searchByEmail", controller.SearchCommentsByEmail)
 	router.POST("/comment", controller.CreateComment)
 	router.PUT("/comment/:id", controller.UpdateComment)
 }
@@ -104,11 +110,14 @@ func RegisterAuthorizationRoutes(router *gin.Engine, controller *controllers.Aut
 func RegisterUserLogRoutes(router *gin.Engine, controller *controllers.UserLogController) {
 	router.GET("/user-log/:id", controller.GetAllLogsFromUser)
 }
+
 func RegisterAppointmentRoutes(router *gin.Engine, controller *controllers.AppointmentController) {
 	router.GET("/appointment/:id", controller.GetAppointmentByID)
 	router.GET("/appointments", controller.GetAllAppointments)
+	router.GET("/appointments/searchByID", controller.SearchAppointmentsByID)
+	router.GET("/appointments/searchByCustomerID", controller.SearchAppointmentsByCustomerID)
 	router.GET("/appointments/searchByState", controller.SearchAppointmentsByState)
-	router.GET("/appointments/customer/:customerID", controller.GetAppointmentsByCustomerID)
+	router.GET("/appointments/customer/:id", controller.GetAppointmentsByCustomerID)
 	router.POST("/appointment", controller.CreateAppointment)
 	router.PUT("/appointment/:id", controller.UpdateAppointment)
 }
@@ -117,6 +126,8 @@ func RegisterCustomerRoutes(router *gin.Engine, controller *controllers.Customer
 	router.GET("/customer/:id", controller.GetCustomerByID)
 	router.GET("/customers", controller.GetAllCustomers)
 	router.GET("/customer/email/:email", controller.GetCustomerByEmail)
+	router.GET("/customer/searchByID", controller.SearchCustomersByID)
+	router.GET("/customer/searchByName", controller.SearchCustomersByName)
 	router.POST("/customer", controller.CreateCustomer)
 	router.PUT("/customer/:id", controller.UpdateCustomer)
 }

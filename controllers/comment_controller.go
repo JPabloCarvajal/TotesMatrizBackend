@@ -24,7 +24,7 @@ func NewCommentController(service *services.CommentService, auth *utilities.Auth
 }
 
 func (cc *CommentController) GetCommentByID(c *gin.Context) {
-	permissionId := config.PERMISSION_GET_PERMISSION_BY_ID
+	permissionId := config.PERMISSION_GET_COMMENT_BY_ID
 
 	if !cc.Auth.CheckPermission(c, permissionId) {
 		return
@@ -221,4 +221,78 @@ func (cc *CommentController) UpdateComment(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, updatedCommentDTO)
+}
+
+func (cc *CommentController) SearchCommentsByID(c *gin.Context) {
+	query := c.Query("id")
+
+	permissionId := config.PERMISSION_SEARCH_COMMENTS_BY_ID
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
+	comments, err := cc.Service.SearchCommentsByID(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving comments"})
+		return
+	}
+
+	if len(comments) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "No comments found"})
+		return
+	}
+
+	var commentsDTO []dtos.GetCommentDTO
+	for _, comment := range comments {
+		commentsDTO = append(commentsDTO, dtos.GetCommentDTO{
+			ID:             comment.ID,
+			Name:           comment.Name,
+			LastName:       comment.LastName,
+			Email:          comment.Email,
+			Phone:          comment.Phone,
+			ResidenceState: comment.ResidenceState,
+			ResidenceCity:  comment.ResidenceCity,
+			Comment:        comment.Comment,
+		})
+	}
+
+	c.JSON(http.StatusOK, commentsDTO)
+}
+
+func (cc *CommentController) SearchCommentsByName(c *gin.Context) {
+	query := c.Query("name")
+
+	permissionId := config.PERMISSION_SEARCH_COMMENTS_BY_NAME
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
+	comments, err := cc.Service.SearchCommentsByName(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving comments"})
+		return
+	}
+
+	if len(comments) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "No comments found"})
+		return
+	}
+
+	var commentsDTO []dtos.GetCommentDTO
+	for _, comment := range comments {
+		commentsDTO = append(commentsDTO, dtos.GetCommentDTO{
+			ID:             comment.ID,
+			Name:           comment.Name,
+			LastName:       comment.LastName,
+			Email:          comment.Email,
+			Phone:          comment.Phone,
+			ResidenceState: comment.ResidenceState,
+			ResidenceCity:  comment.ResidenceCity,
+			Comment:        comment.Comment,
+		})
+	}
+
+	c.JSON(http.StatusOK, commentsDTO)
 }

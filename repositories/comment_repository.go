@@ -56,3 +56,21 @@ func (r *CommentRepository) UpdateComment(comment *models.Comment) error {
 
 	return r.DB.Save(comment).Error
 }
+
+func (r *CommentRepository) SearchCommentsByID(query string) ([]models.Comment, error) {
+	var comments []models.Comment
+	err := r.DB.Where("CAST(id AS TEXT) LIKE ?", query+"%").Find(&comments).Error
+	if err != nil {
+		return nil, err
+	}
+	return comments, nil
+}
+
+func (r *CommentRepository) SearchCommentsByName(name string) ([]models.Comment, error) {
+	var comments []models.Comment
+	err := r.DB.Where("LOWER(name) LIKE LOWER(?)", name+"%").Find(&comments).Error
+	if err != nil {
+		return nil, err
+	}
+	return comments, nil
+}

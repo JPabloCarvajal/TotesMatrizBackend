@@ -54,3 +54,21 @@ func (r *CustomerRepository) UpdateCustomer(customer *models.Customer) error {
 	}
 	return nil
 }
+
+func (r *CustomerRepository) SearchCustomersByID(id string) ([]models.Customer, error) {
+	var customers []models.Customer
+	err := r.DB.Where("CAST(id AS TEXT) LIKE ?", id+"%").Find(&customers).Error
+	if err != nil {
+		return nil, err
+	}
+	return customers, nil
+}
+
+func (r *CustomerRepository) SearchCustomersByName(name string) ([]models.Customer, error) {
+	var customers []models.Customer
+	err := r.DB.Where("LOWER(customer_name) LIKE LOWER(?)", name+"%").Find(&customers).Error
+	if err != nil {
+		return nil, err
+	}
+	return customers, nil
+}

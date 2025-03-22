@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"totesbackend/config"
@@ -23,6 +24,7 @@ func NewAppointmentController(service *services.AppointmentService, auth *utilit
 }
 
 func (ac *AppointmentController) GetAppointmentByID(c *gin.Context) {
+
 	permissionId := config.PERMISSION_GET_APPOINTMENT_BY_ID
 
 	if !ac.Auth.CheckPermission(c, permissionId) {
@@ -45,7 +47,8 @@ func (ac *AppointmentController) GetAppointmentByID(c *gin.Context) {
 }
 
 func (ac *AppointmentController) GetAllAppointments(c *gin.Context) {
-	permissionId := config.PERMISSION_GET_ALL_APPOINTMENT
+
+	permissionId := config.PERMISSION_GET_ALL_APPOINTMENTS
 
 	if !ac.Auth.CheckPermission(c, permissionId) {
 		return
@@ -60,7 +63,56 @@ func (ac *AppointmentController) GetAllAppointments(c *gin.Context) {
 	c.JSON(http.StatusOK, appointments)
 }
 
+func (ac *AppointmentController) SearchAppointmentsByID(c *gin.Context) {
+	permissionId := config.PERMISSION_SEARCH_APPOINTMENTS_BY_ID
+
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
+	query := c.Query("id")
+	fmt.Println("Searching appointments by ID with:", query)
+
+	appointments, err := ac.Service.SearchAppointmentsByID(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving appointments"})
+		return
+	}
+
+	if len(appointments) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "No appointments found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, appointments)
+}
+
+func (ac *AppointmentController) SearchAppointmentsByCustomerID(c *gin.Context) {
+	permissionId := config.PERMISSION_SEARCH_APPOINTMENTS_BY_NAME
+
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
+	query := c.Query("id")
+	fmt.Println("Searching appointments by Customer ID with:", query)
+
+	appointments, err := ac.Service.SearchAppointmentsByCustomerID(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving appointments"})
+		return
+	}
+
+	if len(appointments) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "No appointments found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, appointments)
+}
+
 func (ac *AppointmentController) SearchAppointmentsByState(c *gin.Context) {
+
 	permissionId := config.PERMISSION_SEARCH_APPOINTMENT_BY_STATE
 
 	if !ac.Auth.CheckPermission(c, permissionId) {
@@ -83,6 +135,7 @@ func (ac *AppointmentController) SearchAppointmentsByState(c *gin.Context) {
 }
 
 func (ac *AppointmentController) GetAppointmentsByCustomerID(c *gin.Context) {
+
 	permissionId := config.PERMISSION_GET_APPOINTMENT_BY_CUSTOMER_ID
 
 	if !ac.Auth.CheckPermission(c, permissionId) {
@@ -90,6 +143,7 @@ func (ac *AppointmentController) GetAppointmentsByCustomerID(c *gin.Context) {
 	}
 
 	customerID, err := strconv.Atoi(c.Param("customerID"))
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid customer ID"})
 		return
@@ -105,6 +159,7 @@ func (ac *AppointmentController) GetAppointmentsByCustomerID(c *gin.Context) {
 }
 
 func (ac *AppointmentController) CreateAppointment(c *gin.Context) {
+
 	permissionId := config.PERMISSION_CREATE_APPOINTMENT
 
 	if !ac.Auth.CheckPermission(c, permissionId) {
@@ -127,6 +182,7 @@ func (ac *AppointmentController) CreateAppointment(c *gin.Context) {
 }
 
 func (ac *AppointmentController) UpdateAppointment(c *gin.Context) {
+
 	permissionId := config.PERMISSION_UPDATE_APPOINTMENT
 
 	if !ac.Auth.CheckPermission(c, permissionId) {

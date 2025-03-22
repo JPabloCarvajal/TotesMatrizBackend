@@ -16,7 +16,7 @@ func NewRoleRepository(db *gorm.DB) *RoleRepository {
 
 func (r *RoleRepository) GetAllRoles() ([]models.Role, error) {
 	var roles []models.Role
-	err := r.DB.Find(&roles).Error
+	err := r.DB.Preload("Permissions").Find(&roles).Error
 	if err != nil {
 		return nil, err
 	}
@@ -61,4 +61,26 @@ func (r *RoleRepository) ExistRole(roleID uint) (bool, error) {
 		return false, err
 	}
 	return count > 0, nil
+}
+
+func (r *RoleRepository) SearchRolesByID(query string) ([]models.Role, error) {
+	var roles []models.Role
+	err := r.DB.
+		Where("CAST(id AS TEXT) LIKE ?", query+"%").
+		Find(&roles).Error
+	if err != nil {
+		return nil, err
+	}
+	return roles, nil
+}
+
+func (r *RoleRepository) SearchRolesByName(query string) ([]models.Role, error) {
+	var roles []models.Role
+	err := r.DB.
+		Where("LOWER(name) LIKE LOWER(?)", query+"%").
+		Find(&roles).Error
+	if err != nil {
+		return nil, err
+	}
+	return roles, nil
 }

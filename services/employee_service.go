@@ -13,8 +13,12 @@ func NewEmployeeService(repo *repositories.EmployeeRepository) *EmployeeService 
 	return &EmployeeService{Repo: repo}
 }
 
-func (s *EmployeeService) SearchEmployeeByID(id string) (*models.Employee, error) {
-	return s.Repo.SearchEmployeeByID(id)
+func (s *EmployeeService) GetEmployeeByID(id string) (*models.Employee, error) {
+	return s.Repo.GetEmployeeByID(id)
+}
+
+func (s *EmployeeService) SearchEmployeesByID(query string) ([]models.Employee, error) {
+	return s.Repo.SearchEmployeesByID(query)
 }
 
 func (s *EmployeeService) SearchEmployeesByName(names string) ([]models.Employee, error) {
@@ -26,9 +30,9 @@ func (s *EmployeeService) GetAllEmployees() ([]models.Employee, error) {
 }
 
 func (s *EmployeeService) UpdateEmployee(employee *models.Employee) error {
-	return s.Repo.UpdateUser(employee)
+	return s.Repo.UpdateEmployee(employee)
 }
 
-func (s *EmployeeService) CreateEmployee(employee models.Employee) (*models.Employee, error) {
+func (s *EmployeeService) CreateEmployee(employee *models.Employee) (*models.Employee, error) {
 	return s.Repo.CreateEmployee(employee)
 }

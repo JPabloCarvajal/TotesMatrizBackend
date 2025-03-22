@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"totesbackend/config"
@@ -60,6 +59,7 @@ func (cc *CustomerController) GetCustomerByID(c *gin.Context) {
 }
 
 func (cc *CustomerController) CreateCustomer(c *gin.Context) {
+
 	permissionId := config.PERMISSION_CREATE_CUSTOMER
 
 	if !cc.Auth.CheckPermission(c, permissionId) {
@@ -94,12 +94,12 @@ func (cc *CustomerController) CreateCustomer(c *gin.Context) {
 }
 
 func (cc *CustomerController) UpdateCustomer(c *gin.Context) {
+
 	permissionId := config.PERMISSION_UPDATE_CUSTOMER
 
 	if !cc.Auth.CheckPermission(c, permissionId) {
 		return
 	}
-
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid customer ID"})
@@ -141,9 +141,6 @@ func (cc *CustomerController) GetCustomerByEmail(c *gin.Context) {
 		return
 	}
 
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
-
 	email := c.Param("email")
 
 	customer, err := cc.Service.GetCustomerByEmail(email)
@@ -153,4 +150,82 @@ func (cc *CustomerController) GetCustomerByEmail(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, customer)
+}
+
+func (cc *CustomerController) SearchCustomersByID(c *gin.Context) {
+	permissionId := config.PERMISSION_SEARCH_CUSTOMERS_BY_ID
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
+	query := c.Query("id")
+
+	customers, err := cc.Service.SearchCustomersByID(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving customers"})
+		return
+	}
+
+	if len(customers) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "No customers found"})
+		return
+	}
+
+	var customersDTO []dtos.GetCustomerDTO
+	for _, customer := range customers {
+		customersDTO = append(customersDTO, dtos.GetCustomerDTO{
+			ID:               customer.ID,
+			CustomerName:     customer.CustomerName,
+			CustomerId:       customer.CustomerId,
+			IsBusiness:       customer.IsBusiness,
+			Address:          customer.Address,
+			PhoneNumbers:     customer.PhoneNumbers,
+			CustomerState:    customer.CustomerState,
+			Email:            customer.Email,
+			LastName:         customer.LastName,
+			IdentifierTypeID: customer.IdentifierTypeID,
+		})
+	}
+
+	c.JSON(http.StatusOK, customersDTO)
+}
+
+func (cc *CustomerController) SearchCustomersByName(c *gin.Context) {
+	permissionId := config.PERMISSION_SEARCH_CUSTOMERS_BY_NAME
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
+	query := c.Query("name")
+
+	customers, err := cc.Service.SearchCustomersByName(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving customers"})
+		return
+	}
+
+	if len(customers) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "No customers found"})
+		return
+	}
+
+	var customersDTO []dtos.GetCustomerDTO
+	for _, customer := range customers {
+		customersDTO = append(customersDTO, dtos.GetCustomerDTO{
+			ID:               customer.ID,
+			CustomerName:     customer.CustomerName,
+			CustomerId:       customer.CustomerId,
+			IsBusiness:       customer.IsBusiness,
+			Address:          customer.Address,
+			PhoneNumbers:     customer.PhoneNumbers,
+			CustomerState:    customer.CustomerState,
+			Email:            customer.Email,
+			LastName:         customer.LastName,
+			IdentifierTypeID: customer.IdentifierTypeID,
+		})
+	}
+
+	c.JSON(http.StatusOK, customersDTO)
 }

@@ -2,12 +2,10 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"totesbackend/config"
 	"totesbackend/controllers/utilities"
 	"totesbackend/dtos"
-	"totesbackend/models"
 	"totesbackend/services"
 
 	"github.com/gin-gonic/gin"
@@ -32,7 +30,7 @@ func (ec *EmployeeController) GetEmployeeByID(c *gin.Context) {
 
 	id := c.Param("id")
 
-	employee, err := ec.Service.SearchEmployeeByID(id)
+	employee, err := ec.Service.GetEmployeeByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Employee not found"})
 		return
@@ -59,9 +57,6 @@ func (ec *EmployeeController) GetAllEmployees(c *gin.Context) {
 		return
 	}
 
-	username := c.GetHeader("Username")
-	fmt.Println("Request made by user:", username)
-
 	employees, err := ec.Service.GetAllEmployees()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving employees"})
@@ -86,7 +81,44 @@ func (ec *EmployeeController) GetAllEmployees(c *gin.Context) {
 	c.JSON(http.StatusOK, employeesDTO)
 }
 
+func (ec *EmployeeController) SearchEmployeesByID(c *gin.Context) {
+	query := c.Query("id")
+
+	permissionId := config.PERMISSION_SEARCH_EMPLOYEES_BY_ID
+
+	if !ec.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
+	employees, err := ec.Service.SearchEmployeesByID(query)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving employees"})
+		return
+	}
+	if len(employees) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "No employees found"})
+		return
+	}
+
+	var employeesDTO []dtos.GetEmployeeDTO
+	for _, employee := range employees {
+		employeesDTO = append(employeesDTO, dtos.GetEmployeeDTO{
+			ID:               employee.ID,
+			Names:            employee.Names,
+			LastNames:        employee.LastNames,
+			PhoneNumbers:     employee.PhoneNumbers,
+			UserID:           employee.UserID,
+			IdentifierTypeID: employee.IdentifierTypeID,
+		})
+
+	}
+
+	c.JSON(http.StatusOK, employeesDTO)
+}
+
 func (ec *EmployeeController) SearchEmployeesByName(c *gin.Context) {
+
 	permissionId := config.PERMISSION_SEARCH_EMPLOYEES_BY_NAME
 
 	if !ec.Auth.CheckPermission(c, permissionId) {
@@ -113,7 +145,7 @@ func (ec *EmployeeController) SearchEmployeesByName(c *gin.Context) {
 
 	var employeesDTO []dtos.GetEmployeeDTO
 	for _, employee := range employees {
-		employeeDTO := dtos.GetEmployeeDTO{
+		employeesDTO = append(employeesDTO, dtos.GetEmployeeDTO{
 			ID:               employee.ID,
 			Names:            employee.Names,
 			LastNames:        employee.LastNames,
@@ -122,8 +154,7 @@ func (ec *EmployeeController) SearchEmployeesByName(c *gin.Context) {
 			PhoneNumbers:     employee.PhoneNumbers,
 			UserID:           employee.UserID,
 			IdentifierTypeID: employee.IdentifierTypeID,
-		}
-		employeesDTO = append(employeesDTO, employeeDTO)
+		})
 	}
 
 	c.JSON(http.StatusOK, employeesDTO)
@@ -136,51 +167,27 @@ func (ec *EmployeeController) CreateEmployee(c *gin.Context) {
 		return
 	}
 
-	var dto dtos.CreateEmployeeDTO
-	if err := c.ShouldBindJSON(&dto); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format", "details": err.Error()})
-		return
-	}
-
-	existingEmployee, _ := ec.Service.SearchEmployeeByID(dto.PersonalID)
-	if existingEmployee != nil {
-		c.JSON(http.StatusConflict, gin.H{"error": "An employee with this Personal ID already exists"})
-		return
-	}
-
-	if dto.UserID <= 0 || dto.IdentifierTypeID <= 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User ID or Identifier Type ID"})
-		return
-	}
-
-	employee := models.Employee{
-		Names:            dto.Names,
-		LastNames:        dto.LastNames,
-		PersonalID:       dto.PersonalID,
-		Address:          dto.Address,
-		PhoneNumbers:     dto.PhoneNumbers,
-		UserID:           dto.UserID,
-		IdentifierTypeID: dto.IdentifierTypeID,
-	}
-
-	createdEmployee, err := ec.Service.CreateEmployee(employee)
+	employees, err := ec.Service.GetAllEmployees()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating employee", "details": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving employees"})
 		return
 	}
 
-	employeeDTO := dtos.GetEmployeeDTO{
-		ID:               createdEmployee.ID,
-		Names:            createdEmployee.Names,
-		LastNames:        createdEmployee.LastNames,
-		PersonalID:       createdEmployee.PersonalID,
-		Address:          createdEmployee.Address,
-		PhoneNumbers:     createdEmployee.PhoneNumbers,
-		UserID:           createdEmployee.UserID,
-		IdentifierTypeID: createdEmployee.IdentifierTypeID,
+	var employeesDTO []dtos.GetEmployeeDTO
+	for _, employee := range employees {
+		employeesDTO = append(employeesDTO, dtos.GetEmployeeDTO{
+			ID:               employee.ID,
+			Names:            employee.Names,
+			LastNames:        employee.LastNames,
+			PersonalID:       employee.PersonalID,
+			Address:          employee.Address,
+			PhoneNumbers:     employee.PhoneNumbers,
+			UserID:           employee.UserID,
+			IdentifierTypeID: employee.IdentifierTypeID,
+		})
 	}
 
-	c.JSON(http.StatusCreated, employeeDTO)
+	c.JSON(http.StatusOK, employeesDTO)
 }
 
 func (ec *EmployeeController) UpdateEmployee(c *gin.Context) {
@@ -197,7 +204,7 @@ func (ec *EmployeeController) UpdateEmployee(c *gin.Context) {
 		return
 	}
 
-	employee, err := ec.Service.SearchEmployeeByID(id)
+	employee, err := ec.Service.GetEmployeeByID(id)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Employee not found"})
@@ -221,15 +228,16 @@ func (ec *EmployeeController) UpdateEmployee(c *gin.Context) {
 		return
 	}
 
-	var dtoEmployee dtos.GetEmployeeDTO
-	dtoEmployee.ID = employee.ID
-	dtoEmployee.Names = employee.Names
-	dtoEmployee.LastNames = employee.LastNames
-	dtoEmployee.PersonalID = employee.PersonalID
-	dtoEmployee.Address = employee.Address
-	dtoEmployee.PhoneNumbers = employee.PhoneNumbers
-	dtoEmployee.UserID = employee.UserID
-	dtoEmployee.IdentifierTypeID = employee.IdentifierTypeID
+	employeeDTO := dtos.GetEmployeeDTO{
+		ID:               employee.ID,
+		Names:            employee.Names,
+		LastNames:        employee.LastNames,
+		PersonalID:       employee.PersonalID,
+		Address:          employee.Address,
+		PhoneNumbers:     employee.PhoneNumbers,
+		UserID:           employee.UserID,
+		IdentifierTypeID: employee.IdentifierTypeID,
+	}
 
-	c.JSON(http.StatusOK, dtoEmployee)
+	c.JSON(http.StatusOK, employeeDTO)
 }
