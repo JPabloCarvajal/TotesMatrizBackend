@@ -21,28 +21,31 @@ func RegisterItemRoutes(router *gin.Engine, controller *controllers.ItemControll
 	router.POST("/item", controller.CreateItem)
 }
 
-func RegisterPermissionRoutes(router *gin.Engine, controller *controllers.PermissionController) {
+func RegisterPermissionRoutes(router *gin.Engine,
+	controller *controllers.PermissionController) {
 
 	router.GET("/permission", controller.GetAllPermissions)
 	router.GET("/permission/:id", controller.GetPermissionByID)
 
 }
 
-func RegisterRoleRoutes(router *gin.Engine, controller *controllers.RoleController) {
+func RegisterRoleRoutes(router *gin.Engine,
+	controller *controllers.RoleController) {
 	router.GET("/roles/:id", controller.GetRoleByID)
-
 	router.GET("/roles/:id/permission", controller.GetAllPermissionsOfRole)
 	router.GET("/roles/:id/exist", controller.ExistRole)
-	router.GET("/roles/", controller.GetAllRoles)
+	router.GET("/roles", controller.GetAllRoles)
 }
 
-func RegisterUserTypeRoutes(router *gin.Engine, controller *controllers.UserTypeController) {
+func RegisterUserTypeRoutes(router *gin.Engine,
+	controller *controllers.UserTypeController) {
 	router.GET("/user-types", controller.GetAllUserTypes)
 	router.GET("/user-types/:id", controller.GetUserTypeByID)
 	router.GET("/user-types/:id/exists", controller.ExistsUserType)
 }
 
-func RegisterUserStateTypeRoutes(router *gin.Engine, controller *controllers.UserStateTypeController) {
+func RegisterUserStateTypeRoutes(router *gin.Engine,
+	controller *controllers.UserStateTypeController) {
 	router.GET("/user-state-type", controller.GetAllUserStateTypes)
 	router.GET("/user-state-type/:id", controller.GetUserStateTypeByID)
 }
@@ -52,7 +55,8 @@ func RegisterIdentifierTypeRoutes(router *gin.Engine, controller *controllers.Id
 	router.GET("/identifier-type/:id", controller.GetIdentifierTypeByID)
 }
 
-func RegisterUserRoutes(router *gin.Engine, controller *controllers.UserController) {
+func RegisterUserRoutes(router *gin.Engine,
+	controller *controllers.UserController) {
 	router.GET("/user", controller.GetAllUsers)
 	router.GET("/user/:id", controller.GetUserByID)
 	router.GET("/user/searchByID", controller.SearchUsersByID)
@@ -71,7 +75,8 @@ func RegisterEmployeeRoutes(router *gin.Engine, controller *controllers.Employee
 
 }
 
-func RegisterAdditionalExpenseRoutes(router *gin.Engine, controller *controllers.AdditionalExpenseController) {
+func RegisterAdditionalExpenseRoutes(router *gin.Engine,
+	controller *controllers.AdditionalExpenseController) {
 	router.GET("/additional-expense", controller.GetAllAdditionalExpenses)
 	router.GET("/additional-expense/:id", controller.GetAdditionalExpenseByID)
 	router.POST("/additional-expense", controller.CreateAdditionalExpense)
@@ -83,10 +88,11 @@ func RegisterHistoricalItemPriceRoutes(router *gin.Engine, controller *controlle
 	router.GET("/historical-item-price/:id", controller.GetHistoricalItemPrice)
 }
 
-func RegisterCommentRoutes(router *gin.Engine, controller *controllers.CommentController) {
+func RegisterCommentRoutes(router *gin.Engine,
+	controller *controllers.CommentController) {
 	router.GET("/comment/:id", controller.GetCommentByID)
-	router.GET("/comments", controller.GetAllComments)
-	router.GET("/comments/searchByEmail", controller.SearchCommentsByEmail)
+	router.GET("/comment", controller.GetAllComments)
+	router.GET("/comment/searchByEmail", controller.SearchCommentsByEmail)
 	router.POST("/comment", controller.CreateComment)
 	router.PUT("/comment/:id", controller.UpdateComment)
 }
@@ -129,4 +135,9 @@ func RegisterPurchaseOrderRoutes(router *gin.Engine, controller *controllers.Pur
 	router.POST("/purchaseorder", controller.CreatePurchaseOrder)
 	router.PUT("/purchaseorder/:id", controller.UpdatePurchaseOrder)
 	router.PATCH("/purchaseorder/:id/state", controller.UpdatePurchaseOrderState)
+}
+
+func RegisterDiscountTypeRoutes(router *gin.Engine, controller *controllers.DiscountTypeController) {
+	router.GET("/discount-type", controller.GetAllDiscountTypes)
+	router.GET("/discount-type/:id", controller.GetDiscountTypeByID)
 }

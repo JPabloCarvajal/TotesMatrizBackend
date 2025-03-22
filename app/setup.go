@@ -68,6 +68,7 @@ func SetupAndRunApp() error {
 	setUpCustomerRouter()
 	setUpOrderStateTypeRouter()
 	setUpPurchaseOrderRouter()
+	setUpDiscountTypeRouter()
 
 	router.Run("localhost:8080")
 
@@ -199,4 +200,11 @@ func setUpPurchaseOrderRouter() {
 	purchaseOrderService := services.NewPurchaseOrderService(purchaseOrderRepo)
 	purchaseOrderController := controllers.NewPurchaseOrderController(purchaseOrderService, authUtil)
 	routes.RegisterPurchaseOrderRoutes(router, purchaseOrderController)
+}
+
+func setUpDiscountTypeRouter() {
+	discountTypeRepo := repositories.NewDiscountTypeRepository(db)
+	discountTypeService := services.NewDiscountTypeService(discountTypeRepo)
+	discountTypeController := controllers.NewDiscountTypeController(discountTypeService, authUtil)
+	routes.RegisterDiscountTypeRoutes(router, discountTypeController)
 }
