@@ -152,3 +152,7 @@ func RegisterDiscountTypeRoutes(router *gin.Engine, controller *controllers.Disc
 	router.GET("/discount-type", controller.GetAllDiscountTypes)
 	router.GET("/discount-type/:id", controller.GetDiscountTypeByID)
 }
+
+func RegisterUserCredentialValidationRoutes(router *gin.Engine, controller *controllers.UserCredentialValidationController) {
+	router.POST("/user-credential-validation", controller.ValidateUserCredentials)
+}
