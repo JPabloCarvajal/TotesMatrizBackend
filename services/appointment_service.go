@@ -1,6 +1,7 @@
 package services
 
 import (
+	"time"
 	"totesbackend/models"
 	"totesbackend/repositories"
 )
@@ -43,4 +44,8 @@ func (s *AppointmentService) SearchAppointmentsByID(query string) ([]models.Appo
 
 func (s *AppointmentService) SearchAppointmentsByCustomerID(query string) ([]models.Appointment, error) {
 	return s.Repo.SearchAppointmentsByCustomerID(query)
+}
+
+func (s *AppointmentService) GetAppointmentByCustomerIDAndDate(customerID int, dateTime time.Time) (*models.Appointment, error) {
+	return s.Repo.GetAppointmentByCustomerIDAndDate(customerID, dateTime)
 }
