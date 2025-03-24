@@ -42,7 +42,6 @@ func (uc *UserController) GetUserByID(c *gin.Context) {
 		ID:          user.ID,
 		Email:       user.Email,
 		Password:    user.Password,
-		Token:       user.Token,
 		UserTypeID:  user.UserTypeID,
 		UserStateID: user.UserStateTypeID,
 	}
@@ -70,7 +69,6 @@ func (uc *UserController) GetAllUsers(c *gin.Context) {
 			ID:          user.ID,
 			Email:       user.Email,
 			Password:    user.Password,
-			Token:       user.Token,
 			UserTypeID:  user.UserTypeID,
 			UserStateID: user.UserStateTypeID,
 		}
@@ -113,7 +111,6 @@ func (uc *UserController) SearchUsersByID(c *gin.Context) {
 			ID:          user.ID,
 			Email:       user.Email,
 			Password:    user.Password,
-			Token:       user.Token,
 			UserTypeID:  user.UserTypeID,
 			UserStateID: user.UserStateTypeID,
 		}
@@ -155,7 +152,6 @@ func (uc *UserController) SearchUsersByEmail(c *gin.Context) {
 			ID:          user.ID,
 			Email:       user.Email,
 			Password:    user.Password,
-			Token:       user.Token,
 			UserTypeID:  user.UserTypeID,
 			UserStateID: user.UserStateTypeID,
 		}
@@ -193,7 +189,6 @@ func (uc *UserController) UpdateUserState(c *gin.Context) {
 		ID:          user.ID,
 		Email:       user.Email,
 		Password:    user.Password,
-		Token:       user.Token,
 		UserTypeID:  user.UserTypeID,
 		UserStateID: user.UserStateTypeID,
 	}
@@ -228,7 +223,6 @@ func (uc *UserController) UpdateUser(c *gin.Context) {
 
 	user.Email = dto.Email
 	user.Password = dto.Password
-	user.Token = dto.Token
 	user.UserTypeID = dto.UserTypeID
 	user.UserStateTypeID = dto.UserStateID
 
@@ -238,7 +232,6 @@ func (uc *UserController) UpdateUser(c *gin.Context) {
 	dtoUser.ID = user.ID
 	dtoUser.Email = user.Email
 	dtoUser.Password = user.Password
-	dtoUser.Token = user.Token
 	dtoUser.UserTypeID = user.UserTypeID
 	dtoUser.UserStateID = user.UserStateTypeID
 
@@ -271,7 +264,6 @@ func (uc *UserController) CreateUser(c *gin.Context) {
 	newUser := models.User{
 		Email:           dto.Email,
 		Password:        dto.Password,
-		Token:           dto.Token,
 		UserTypeID:      dto.UserTypeID,
 		UserStateTypeID: dto.UserStateID,
 	}
@@ -286,7 +278,6 @@ func (uc *UserController) CreateUser(c *gin.Context) {
 		ID:          createdUser.ID,
 		Email:       createdUser.Email,
 		Password:    createdUser.Password,
-		Token:       createdUser.Token,
 		UserTypeID:  createdUser.UserTypeID,
 		UserStateID: createdUser.UserStateTypeID,
 	}
