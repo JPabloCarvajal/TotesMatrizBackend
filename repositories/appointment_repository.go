@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"time"
 	"totesbackend/models"
 
 	"gorm.io/gorm"
@@ -80,4 +81,13 @@ func (r *AppointmentRepository) SearchAppointmentsByCustomerID(query string) ([]
 		return nil, err
 	}
 	return appointments, nil
+}
+
+func (r *AppointmentRepository) GetAppointmentByCustomerIDAndDate(customerID int, dateTime time.Time) (*models.Appointment, error) {
+	var appointment models.Appointment
+	err := r.DB.Where("customer_id = ? AND date_time = ?", customerID, dateTime).First(&appointment).Error
+	if err != nil {
+		return nil, err
+	}
+	return &appointment, nil
 }
