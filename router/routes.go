@@ -161,3 +161,8 @@ func RegisterTaxTypeRoutes(router *gin.Engine, controller *controllers.TaxTypeCo
 	router.GET("/tax-types", controller.GetAllTaxTypes)
 	router.GET("/tax-types/:id", controller.GetTaxTypeByID)
 }
+
+func RegisterBillingRoutes(router *gin.Engine, controller *controllers.BillingController) {
+	router.POST("/billing/subtotal", controller.CalculateSubtotal)
+	router.POST("/billing/total", controller.CalculateTotal)
+}

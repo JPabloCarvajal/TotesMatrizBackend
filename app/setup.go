@@ -71,6 +71,7 @@ func SetupAndRunApp() error {
 	setUpDiscountTypeRouter()
 	setUpUserCredentialValidationRouter()
 	setUpTaxTypeRouter()
+	setUpBillingRouter()
 	router.Run("localhost:8080")
 
 	return nil
@@ -222,4 +223,15 @@ func setUpTaxTypeRouter() {
 	taxTypeService := services.NewTaxTypeService(taxTypeRepo)
 	taxTypeController := controllers.NewTaxTypeController(taxTypeService, authUtil)
 	routes.RegisterTaxTypeRoutes(router, taxTypeController)
+}
+
+func setUpBillingRouter() {
+	billingRepo := repositories.NewItemRepository(db)
+	discountRepo := repositories.NewDiscountTypeRepository(db)
+	taxRepo := repositories.NewTaxTypeRepository(db)
+
+	billingService := services.NewBillingService(billingRepo, discountRepo, taxRepo)
+	billingController := controllers.NewBillingController(billingService, authUtil)
+
+	routes.RegisterBillingRoutes(router, billingController)
 }
