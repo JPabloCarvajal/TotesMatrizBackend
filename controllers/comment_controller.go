@@ -125,6 +125,12 @@ func (cc *CommentController) SearchCommentsByEmail(c *gin.Context) {
 
 func (cc *CommentController) CreateComment(c *gin.Context) {
 
+	permissionId := config.PERMISSION_CREATE_COMMENT
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
 	var dto dtos.CreateCommentDTO
 	if err := c.ShouldBindJSON(&dto); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

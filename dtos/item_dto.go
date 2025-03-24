@@ -21,3 +21,8 @@ type UpdateItemDTO struct {
 	ItemState     bool    `json:"item_state"`
 	ItemTypeID    int     `json:"item_type_id"`
 }
+
+type BillingItemDTO struct {
+	ID    int `json:"id"`
+	Stock int `json:"stock"`
+}

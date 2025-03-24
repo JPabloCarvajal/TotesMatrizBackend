@@ -66,7 +66,7 @@ func MigrateDB() {
 		&models.AdditionalExpense{}, &models.Permission{}, &models.Role{},
 		&models.UserType{}, &models.IdentifierType{}, &models.UserStateType{}, &models.Employee{}, &models.HistoricalItemPrice{},
 		&models.Comment{}, models.User{}, models.UserLog{}, &models.Customer{}, &models.Appointment{}, models.OrderStateType{}, &models.PurchaseOrder{},
-		&models.DiscountType{})
+		&models.DiscountType{}, &models.TaxType{})
 	if err != nil {
 		log.Fatal("Error en la migración de la base de datos:", err)
 	}

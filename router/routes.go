@@ -156,3 +156,8 @@ func RegisterDiscountTypeRoutes(router *gin.Engine, controller *controllers.Disc
 func RegisterUserCredentialValidationRoutes(router *gin.Engine, controller *controllers.UserCredentialValidationController) {
 	router.POST("/user-credential-validation", controller.ValidateUserCredentials)
 }
+
+func RegisterTaxTypeRoutes(router *gin.Engine, controller *controllers.TaxTypeController) {
+	router.GET("/tax-types", controller.GetAllTaxTypes)
+	router.GET("/tax-types/:id", controller.GetTaxTypeByID)
+}
