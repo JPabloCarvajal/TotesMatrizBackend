@@ -167,3 +167,10 @@ func RegisterBillingRoutes(router *gin.Engine, controller *controllers.BillingCo
 	router.POST("/billing/subtotal", controller.CalculateSubtotal)
 	router.POST("/billing/total", controller.CalculateTotal)
 }
+
+func RegisterInvoice(router *gin.Engine, controller *controllers.InvoiceController) {
+	router.GET("/invoice/:id", controller.GetInvoiceByID)
+	router.GET("/invoice", controller.GetAllInvoices)
+	router.GET("/invoice/searchById", controller.SearchInvoiceByID)
+	router.GET("/invoice/searchByPersonalId", controller.SearchInvoiceByCustomerPersonalId)
+}
