@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"totesbackend/config"
 	"totesbackend/controllers/utilities"
 	"totesbackend/models"
 	"totesbackend/services"
@@ -25,6 +26,11 @@ func NewAppointmentController(service *services.AppointmentService, auth *utilit
 
 func (ac *AppointmentController) GetAppointmentByID(c *gin.Context) {
 
+	permissionId := config.PERMISSION_GET_APPOINTMENT_BY_ID
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid appointment ID"})
@@ -42,6 +48,11 @@ func (ac *AppointmentController) GetAppointmentByID(c *gin.Context) {
 
 func (ac *AppointmentController) GetAllAppointments(c *gin.Context) {
 
+	permissionId := config.PERMISSION_GET_ALL_APPOINTMENTS
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
 	appointments, err := ac.Service.GetAllAppointments()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving appointments"})
@@ -52,6 +63,12 @@ func (ac *AppointmentController) GetAllAppointments(c *gin.Context) {
 }
 
 func (ac *AppointmentController) SearchAppointmentsByID(c *gin.Context) {
+
+	permissionId := config.PERMISSION_SEARCH_APPOINTMENTS_BY_ID
+
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	query := c.Query("id")
 	fmt.Println("Searching appointments by ID with:", query)
@@ -72,6 +89,12 @@ func (ac *AppointmentController) SearchAppointmentsByID(c *gin.Context) {
 
 func (ac *AppointmentController) SearchAppointmentsByCustomerID(c *gin.Context) {
 
+	permissionId := config.PERMISSION_GET_APPOINTMENT_BY_CUSTOMER_ID
+
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
 	query := c.Query("id")
 	fmt.Println("Searching appointments by Customer ID with:", query)
 
@@ -91,6 +114,12 @@ func (ac *AppointmentController) SearchAppointmentsByCustomerID(c *gin.Context) 
 
 func (ac *AppointmentController) SearchAppointmentsByState(c *gin.Context) {
 
+	permissionId := config.PERMISSION_SEARCH_APPOINTMENT_BY_STATE
+
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
 	state, err := strconv.ParseBool(c.Query("state"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid state value"})
@@ -107,6 +136,12 @@ func (ac *AppointmentController) SearchAppointmentsByState(c *gin.Context) {
 }
 
 func (ac *AppointmentController) GetAppointmentsByCustomerID(c *gin.Context) {
+
+	permissionId := config.PERMISSION_GET_APPOINTMENT_BY_CUSTOMER_ID
+
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	customerID, err := strconv.Atoi(c.Param("customerID"))
 
@@ -126,6 +161,12 @@ func (ac *AppointmentController) GetAppointmentsByCustomerID(c *gin.Context) {
 
 func (ac *AppointmentController) CreateAppointment(c *gin.Context) {
 
+	permissionId := config.PERMISSION_CREATE_APPOINTMENT
+
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
 	var appointment models.Appointment
 	if err := c.ShouldBindJSON(&appointment); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format"})
@@ -142,6 +183,12 @@ func (ac *AppointmentController) CreateAppointment(c *gin.Context) {
 }
 
 func (ac *AppointmentController) UpdateAppointment(c *gin.Context) {
+
+	permissionId := config.PERMISSION_UPDATE_APPOINTMENT
+
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		return
+	}
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -171,6 +218,13 @@ func (ac *AppointmentController) UpdateAppointment(c *gin.Context) {
 }
 
 func (ac *AppointmentController) GetAppointmentByCustomerIDAndDate(c *gin.Context) {
+
+	permissionId := config.PERMISSION_GET_APPOINTMENTS_BY_CUSTOMERID_AND_DATE
+
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
 	customerID, err := strconv.Atoi(c.Query("customerId"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid customer ID"})
@@ -189,7 +243,6 @@ func (ac *AppointmentController) GetAppointmentByCustomerIDAndDate(c *gin.Contex
 		return
 	}
 
-	// Filtrar solo los campos requeridos en la respuesta
 	response := gin.H{
 		"id":           appointment.ID,
 		"dateTime":     appointment.DateTime,

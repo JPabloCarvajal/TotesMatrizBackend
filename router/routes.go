@@ -126,10 +126,12 @@ func RegisterAppointmentRoutes(router *gin.Engine, controller *controllers.Appoi
 
 func RegisterCustomerRoutes(router *gin.Engine, controller *controllers.CustomerController) {
 	router.GET("/customer/:id", controller.GetCustomerByID)
+	router.GET("/customer/customerID/:customerID", controller.GetCustomerByCustomerID)
 	router.GET("/customers", controller.GetAllCustomers)
 	router.GET("/customer/email/:email", controller.GetCustomerByEmail)
 	router.GET("/customer/searchByID", controller.SearchCustomersByID)
 	router.GET("/customer/searchByName", controller.SearchCustomersByName)
+	router.GET("/customer/searchByLastName", controller.SearchCustomersByLastName)
 	router.POST("/customer", controller.CreateCustomer)
 	router.PUT("/customer/:id", controller.UpdateCustomer)
 }
@@ -148,6 +150,7 @@ func RegisterPurchaseOrderRoutes(router *gin.Engine, controller *controllers.Pur
 	router.POST("/purchaseorder", controller.CreatePurchaseOrder)
 	router.PUT("/purchaseorder/:id", controller.UpdatePurchaseOrder)
 	router.PATCH("/purchaseorder/:id/state", controller.UpdatePurchaseOrderState)
+
 }
 
 func RegisterDiscountTypeRoutes(router *gin.Engine, controller *controllers.DiscountTypeController) {

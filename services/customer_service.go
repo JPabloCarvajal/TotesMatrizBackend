@@ -17,6 +17,10 @@ func (s *CustomerService) GetCustomerByID(id int) (*models.Customer, error) {
 	return s.Repo.GetCustomerByID(id)
 }
 
+func (s *CustomerService) GetCustomerByCustomerID(customerID string) (*models.Customer, error) {
+	return s.Repo.GetCustomerByCustomerID(customerID)
+}
+
 func (s *CustomerService) GetAllCustomers() ([]models.Customer, error) {
 	return s.Repo.GetAllCustomers()
 }
@@ -39,4 +43,8 @@ func (s *CustomerService) SearchCustomersByID(id string) ([]models.Customer, err
 
 func (s *CustomerService) SearchCustomersByName(name string) ([]models.Customer, error) {
 	return s.Repo.SearchCustomersByName(name)
+}
+
+func (s *CustomerService) SearchCustomersByLastName(lastname string) ([]models.Customer, error) {
+	return s.Repo.SearchCustomersByLastName(lastname)
 }
