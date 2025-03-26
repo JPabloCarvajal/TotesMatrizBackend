@@ -249,6 +249,12 @@ func (cc *CustomerController) SearchCustomersByName(c *gin.Context) {
 }
 
 func (cc *CustomerController) SearchCustomersByLastName(c *gin.Context) {
+	permissionId := config.PERMISSION_SEARCH_CUSTOMERS_BY_LASTNAME
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
 	query := c.Query("lastname")
 
 	customers, err := cc.Service.SearchCustomersByLastName(query)
