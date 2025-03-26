@@ -19,6 +19,7 @@ func RegisterItemRoutes(router *gin.Engine, controller *controllers.ItemControll
 	router.PATCH("/item/:id/state", controller.UpdateItemState)
 	router.PUT("/item/:id", controller.UpdateItem)
 	router.POST("/item", controller.CreateItem)
+	router.GET("/item/:id/stock", controller.HasEnoughStock)
 }
 
 func RegisterPermissionRoutes(router *gin.Engine,

@@ -3,6 +3,7 @@ package controllers
 import (
 	"errors"
 	"net/http"
+	"strconv"
 
 	"totesbackend/config"
 	"totesbackend/controllers/utilities"
@@ -21,6 +22,31 @@ type ItemController struct {
 
 func NewItemController(service *services.ItemService, auth *utilities.AuthorizationUtil) *ItemController {
 	return &ItemController{Service: service, Auth: auth}
+}
+
+func (ic *ItemController) HasEnoughStock(c *gin.Context) {
+	permissionId := config.PERMISSION_CALCULATE_SUBTOTAL
+
+	if !ic.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
+	idParam := c.Param("id")
+
+	quantityParam := c.Query("quantity")
+	quantity, err := strconv.Atoi(quantityParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid quantity"})
+		return
+	}
+
+	hasStock, err := ic.Service.HasEnoughStock(idParam, quantity)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error checking stock"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"hasEnoughStock": hasStock})
 }
 
 func (ic *ItemController) GetItemByID(c *gin.Context) {

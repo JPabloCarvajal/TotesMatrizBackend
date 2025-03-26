@@ -35,6 +35,10 @@ func (s *ItemService) UpdateItemState(id string, state bool) (*models.Item, erro
 	return s.Repo.UpdateItemState(id, state)
 }
 
+func (s *ItemService) HasEnoughStock(id string, quantity int) (bool, error) {
+	return s.Repo.HasEnoughStock(id, quantity)
+}
+
 func (s *ItemService) UpdateItem(item *models.Item) error {
 	hisRepo := repositories.NewHistoricalItemPriceRepository(s.Repo.DB)
 

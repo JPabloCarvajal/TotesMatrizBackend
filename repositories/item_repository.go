@@ -23,6 +23,15 @@ func (r *ItemRepository) GetItemByID(id string) (*models.Item, error) {
 	return &item, nil
 }
 
+func (r *ItemRepository) HasEnoughStock(id string, quantity int) (bool, error) {
+	var stock int
+	err := r.DB.Model(&models.Item{}).Select("stock").Where("id = ?", id).Scan(&stock).Error
+	if err != nil {
+		return false, err
+	}
+	return stock >= quantity, nil
+}
+
 func (r *ItemRepository) GetAllItems() ([]models.Item, error) {
 	var items []models.Item
 	err := r.DB.Preload("ItemType").Preload("AdditionalExpenses").Find(&items).Error
