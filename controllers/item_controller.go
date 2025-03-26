@@ -24,8 +24,8 @@ func NewItemController(service *services.ItemService, auth *utilities.Authorizat
 	return &ItemController{Service: service, Auth: auth}
 }
 
-func (ic *ItemController) HasEnoughStock(c *gin.Context) {
-	permissionId := config.PERMISSION_CALCULATE_SUBTOTAL
+func (ic *ItemController) CheckItemStock(c *gin.Context) {
+	permissionId := config.PERMISSION_CHECK_ITEM_STOCK
 
 	if !ic.Auth.CheckPermission(c, permissionId) {
 		return
