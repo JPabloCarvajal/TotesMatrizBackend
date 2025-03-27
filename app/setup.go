@@ -239,7 +239,13 @@ func setUpBillingRouter() {
 
 func setUpInvoice() {
 	invoiceRepo := repositories.NewInvoiceRepository(db)
-	invoiceService := services.NewInvoiceService(invoiceRepo)
+	itemRepo := repositories.NewItemRepository(db)
+	billingRepo := repositories.NewItemRepository(db)
+	discountRepo := repositories.NewDiscountTypeRepository(db)
+	taxRepo := repositories.NewTaxTypeRepository(db)
+
+	billingService := services.NewBillingService(billingRepo, discountRepo, taxRepo)
+	invoiceService := services.NewInvoiceService(invoiceRepo, itemRepo, billingService)
 	invoiceController := controllers.NewInvoiceController(invoiceService, authUtil)
 
 	routes.RegisterInvoice(router, invoiceController)

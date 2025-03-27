@@ -44,7 +44,7 @@ func (ic *InvoiceController) GetAllInvoices(c *gin.Context) {
 			CustomerID:     invoice.CustomerID,
 			Subtotal:       invoice.Subtotal,
 			Total:          invoice.Total,
-			Items:          extractItems(invoice.Items),
+			Items:          extractBillingItems(invoice.Items),
 			Discounts:      extractDiscountIds(invoice.Discounts),
 			Taxes:          extractTaxIds(invoice.Taxes),
 		})
@@ -80,7 +80,7 @@ func (ic *InvoiceController) GetInvoiceByID(c *gin.Context) {
 		CustomerID:     invoice.CustomerID,
 		Subtotal:       invoice.Subtotal,
 		Total:          invoice.Total,
-		Items:          extractItems(invoice.Items),
+		Items:          extractBillingItems(invoice.Items),
 		Discounts:      extractDiscountIds(invoice.Discounts),
 		Taxes:          extractTaxIds(invoice.Taxes),
 	}
@@ -117,7 +117,7 @@ func (ic *InvoiceController) SearchInvoiceByID(c *gin.Context) {
 			CustomerID:     invoice.CustomerID,
 			Subtotal:       invoice.Subtotal,
 			Total:          invoice.Total,
-			Items:          extractItems(invoice.Items),
+			Items:          extractBillingItems(invoice.Items),
 			Discounts:      extractDiscountIds(invoice.Discounts),
 			Taxes:          extractTaxIds(invoice.Taxes),
 		})
@@ -154,7 +154,7 @@ func (ic *InvoiceController) SearchInvoiceByCustomerPersonalId(c *gin.Context) {
 			CustomerID:     invoice.CustomerID,
 			Subtotal:       invoice.Subtotal,
 			Total:          invoice.Total,
-			Items:          extractItems(invoice.Items),
+			Items:          extractBillingItems(invoice.Items),
 			Discounts:      extractDiscountIds(invoice.Discounts),
 			Taxes:          extractTaxIds(invoice.Taxes),
 		})
@@ -163,7 +163,42 @@ func (ic *InvoiceController) SearchInvoiceByCustomerPersonalId(c *gin.Context) {
 	c.JSON(http.StatusOK, invoiceDTOs)
 }
 
-func extractItems(items []models.InvoiceItem) []dtos.BillingItemDTO {
+func (ic *InvoiceController) CreateInvoice(c *gin.Context) {
+	permissionId := config.PERMISSION_CREATE_INVOICE
+
+	if !ic.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
+	var dto dtos.CreateInvoiceDTO
+	if err := c.ShouldBindJSON(&dto); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request data"})
+		return
+	}
+
+	invoice, err := ic.Service.CreateInvoice(&dto)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	invoiceDTO := dtos.GetInvoiceDTO{
+		ID:             invoice.ID,
+		EnterpriseData: invoice.EnterpriseData,
+		DateTime:       invoice.DateTime,
+		CustomerID:     invoice.CustomerID,
+		Subtotal:       invoice.Subtotal,
+		Total:          invoice.Total,
+		Items:          extractBillingItems(invoice.Items),
+		Discounts:      extractDiscountIds(invoice.Discounts),
+		Taxes:          extractTaxIds(invoice.Taxes),
+	}
+
+	// Responder con la factura creada
+	c.JSON(http.StatusCreated, invoiceDTO)
+}
+
+func extractBillingItems(items []models.InvoiceItem) []dtos.BillingItemDTO {
 	var billingItems []dtos.BillingItemDTO
 	for _, item := range items {
 		billingItems = append(billingItems, dtos.BillingItemDTO{

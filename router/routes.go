@@ -174,4 +174,5 @@ func RegisterInvoice(router *gin.Engine, controller *controllers.InvoiceControll
 	router.GET("/invoice", controller.GetAllInvoices)
 	router.GET("/invoice/searchById", controller.SearchInvoiceByID)
 	router.GET("/invoice/searchByPersonalId", controller.SearchInvoiceByCustomerPersonalId)
+	router.POST("/invoice", controller.CreateInvoice)
 }

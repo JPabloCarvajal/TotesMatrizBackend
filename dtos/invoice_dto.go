@@ -15,3 +15,11 @@ type GetInvoiceDTO struct {
 	Discounts      []int            `json:"discounts"`
 	Taxes          []int            `json:"taxes"`
 }
+
+type CreateInvoiceDTO struct {
+	EnterpriseData string           `json:"enterprise_data"`
+	CustomerID     int              `json:"customer_id"`
+	Items          []BillingItemDTO `json:"items"`
+	Discounts      []int            `json:"discounts"`
+	Taxes          []int            `json:"taxes"`
+}
