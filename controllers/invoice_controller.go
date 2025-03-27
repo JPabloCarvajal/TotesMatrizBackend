@@ -44,7 +44,7 @@ func (ic *InvoiceController) GetAllInvoices(c *gin.Context) {
 			CustomerID:     invoice.CustomerID,
 			Subtotal:       invoice.Subtotal,
 			Total:          invoice.Total,
-			Items:          extractItemIds(invoice.Items),
+			Items:          extractItems(invoice.Items),
 			Discounts:      extractDiscountIds(invoice.Discounts),
 			Taxes:          extractTaxIds(invoice.Taxes),
 		})
@@ -80,7 +80,7 @@ func (ic *InvoiceController) GetInvoiceByID(c *gin.Context) {
 		CustomerID:     invoice.CustomerID,
 		Subtotal:       invoice.Subtotal,
 		Total:          invoice.Total,
-		Items:          extractItemIds(invoice.Items),
+		Items:          extractItems(invoice.Items),
 		Discounts:      extractDiscountIds(invoice.Discounts),
 		Taxes:          extractTaxIds(invoice.Taxes),
 	}
@@ -117,7 +117,7 @@ func (ic *InvoiceController) SearchInvoiceByID(c *gin.Context) {
 			CustomerID:     invoice.CustomerID,
 			Subtotal:       invoice.Subtotal,
 			Total:          invoice.Total,
-			Items:          extractItemIds(invoice.Items),
+			Items:          extractItems(invoice.Items),
 			Discounts:      extractDiscountIds(invoice.Discounts),
 			Taxes:          extractTaxIds(invoice.Taxes),
 		})
@@ -154,7 +154,7 @@ func (ic *InvoiceController) SearchInvoiceByCustomerPersonalId(c *gin.Context) {
 			CustomerID:     invoice.CustomerID,
 			Subtotal:       invoice.Subtotal,
 			Total:          invoice.Total,
-			Items:          extractItemIds(invoice.Items),
+			Items:          extractItems(invoice.Items),
 			Discounts:      extractDiscountIds(invoice.Discounts),
 			Taxes:          extractTaxIds(invoice.Taxes),
 		})
@@ -163,12 +163,15 @@ func (ic *InvoiceController) SearchInvoiceByCustomerPersonalId(c *gin.Context) {
 	c.JSON(http.StatusOK, invoiceDTOs)
 }
 
-func extractItemIds(items []models.Item) []int {
-	var ids []int
+func extractItems(items []models.InvoiceItem) []dtos.BillingItemDTO {
+	var billingItems []dtos.BillingItemDTO
 	for _, item := range items {
-		ids = append(ids, item.ID)
+		billingItems = append(billingItems, dtos.BillingItemDTO{
+			ID:    item.ItemID,
+			Stock: item.Amount,
+		})
 	}
-	return ids
+	return billingItems
 }
 
 func extractDiscountIds(discounts []models.DiscountType) []int {

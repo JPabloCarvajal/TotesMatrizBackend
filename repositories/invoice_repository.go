@@ -17,7 +17,11 @@ func NewInvoiceRepository(db *gorm.DB) *InvoiceRepository {
 
 func (r *InvoiceRepository) GetInvoiceByID(id string) (*models.Invoice, error) {
 	var invoice models.Invoice
-	err := r.DB.Preload("Customer").Preload("Items").Preload("Discounts").Preload("Taxes").First(&invoice, id).Error
+	err := r.DB.Preload("Customer").
+		Preload("Items.Item").
+		Preload("Discounts").
+		Preload("Taxes").
+		Find(&invoice).Error
 	if err != nil {
 		return nil, errors.New("invoice not found")
 	}
@@ -26,7 +30,11 @@ func (r *InvoiceRepository) GetInvoiceByID(id string) (*models.Invoice, error) {
 
 func (r *InvoiceRepository) GetAllInvoices() ([]models.Invoice, error) {
 	var invoices []models.Invoice
-	err := r.DB.Preload("Customer").Preload("Items").Preload("Discounts").Preload("Taxes").Find(&invoices).Error
+	err := r.DB.Preload("Customer").
+		Preload("Items.Item").
+		Preload("Discounts").
+		Preload("Taxes").
+		Find(&invoices).Error
 	if err != nil {
 		return nil, errors.New("error retrieving invoices")
 	}
@@ -35,7 +43,7 @@ func (r *InvoiceRepository) GetAllInvoices() ([]models.Invoice, error) {
 
 func (r *InvoiceRepository) SearchInvoiceByID(query string) ([]models.Invoice, error) {
 	var invoices []models.Invoice
-	err := r.DB.Preload("Customer").Preload("Items").Preload("Discounts").Preload("Taxes").
+	err := r.DB.Preload("Customer").Preload("Items.Item").Preload("Discounts").Preload("Taxes").
 		Where("CAST(id AS TEXT) LIKE ?", query+"%").Find(&invoices).Error
 
 	if err != nil {
@@ -46,10 +54,14 @@ func (r *InvoiceRepository) SearchInvoiceByID(query string) ([]models.Invoice, e
 
 func (r *InvoiceRepository) SearchInvoiceByCustomerPersonalId(query string) ([]models.Invoice, error) {
 	var invoices []models.Invoice
-	err := r.DB.Preload("Customer").Preload("Items").Preload("Discounts").Preload("Taxes").
+	err := r.DB.Preload("Customer").
+		Preload("Items.Item").
+		Preload("Discounts").
+		Preload("Taxes").
 		Joins("JOIN customers ON customers.id = invoices.customer_id").
-		Where("customers.customer_id LIKE ?", query+"%").
+		Where("customers.customer_id ILIKE ?", query+"%"). // ILIKE para búsqueda sin distinción de mayúsculas
 		Find(&invoices).Error
+
 	if err != nil {
 		return nil, err
 	}
