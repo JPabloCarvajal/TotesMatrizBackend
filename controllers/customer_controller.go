@@ -58,6 +58,24 @@ func (cc *CustomerController) GetCustomerByID(c *gin.Context) {
 	c.JSON(http.StatusOK, customer)
 }
 
+func (cc *CustomerController) GetCustomerByCustomerID(c *gin.Context) {
+	permissionId := config.PERMISSION_GET_CUSTOMER_BY_CUSTOMERID
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
+	customerID := c.Param("customerID")
+
+	customer, err := cc.Service.GetCustomerByCustomerID(customerID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Customer not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, customer)
+}
+
 func (cc *CustomerController) CreateCustomer(c *gin.Context) {
 
 	permissionId := config.PERMISSION_CREATE_CUSTOMER
@@ -201,6 +219,45 @@ func (cc *CustomerController) SearchCustomersByName(c *gin.Context) {
 	query := c.Query("name")
 
 	customers, err := cc.Service.SearchCustomersByName(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving customers"})
+		return
+	}
+
+	if len(customers) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "No customers found"})
+		return
+	}
+
+	var customersDTO []dtos.GetCustomerDTO
+	for _, customer := range customers {
+		customersDTO = append(customersDTO, dtos.GetCustomerDTO{
+			ID:               customer.ID,
+			CustomerName:     customer.CustomerName,
+			CustomerId:       customer.CustomerId,
+			IsBusiness:       customer.IsBusiness,
+			Address:          customer.Address,
+			PhoneNumbers:     customer.PhoneNumbers,
+			CustomerState:    customer.CustomerState,
+			Email:            customer.Email,
+			LastName:         customer.LastName,
+			IdentifierTypeID: customer.IdentifierTypeID,
+		})
+	}
+
+	c.JSON(http.StatusOK, customersDTO)
+}
+
+func (cc *CustomerController) SearchCustomersByLastName(c *gin.Context) {
+	permissionId := config.PERMISSION_SEARCH_CUSTOMERS_BY_LASTNAME
+
+	if !cc.Auth.CheckPermission(c, permissionId) {
+		return
+	}
+
+	query := c.Query("lastname")
+
+	customers, err := cc.Service.SearchCustomersByLastName(query)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving customers"})
 		return

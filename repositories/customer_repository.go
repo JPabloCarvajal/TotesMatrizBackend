@@ -23,6 +23,15 @@ func (r *CustomerRepository) GetCustomerByID(id int) (*models.Customer, error) {
 	return &customer, nil
 }
 
+func (r *CustomerRepository) GetCustomerByCustomerID(customerID string) (*models.Customer, error) {
+	var customer models.Customer
+	err := r.DB.First(&customer, "customer_id = ?", customerID).Error
+	if err != nil {
+		return nil, err
+	}
+	return &customer, nil
+}
+
 func (r *CustomerRepository) GetAllCustomers() ([]models.Customer, error) {
 	var customers []models.Customer
 	err := r.DB.Find(&customers).Error
@@ -67,6 +76,15 @@ func (r *CustomerRepository) SearchCustomersByID(id string) ([]models.Customer, 
 func (r *CustomerRepository) SearchCustomersByName(name string) ([]models.Customer, error) {
 	var customers []models.Customer
 	err := r.DB.Where("LOWER(customer_name) LIKE LOWER(?)", name+"%").Find(&customers).Error
+	if err != nil {
+		return nil, err
+	}
+	return customers, nil
+}
+
+func (r *CustomerRepository) SearchCustomersByLastName(lastname string) ([]models.Customer, error) {
+	var customers []models.Customer
+	err := r.DB.Where("LOWER(last_name) LIKE LOWER(?)", lastname+"%").Find(&customers).Error
 	if err != nil {
 		return nil, err
 	}

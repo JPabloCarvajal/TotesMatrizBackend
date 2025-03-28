@@ -2,7 +2,7 @@ package models
 
 type Customer struct {
 	ID               int    `gorm:"primaryKey;autoIncrement" json:"id"`
-	CustomerName     string `gorm:"size:255;not null" json:"customerName"`
+	CustomerName     string `gorm:"size:255; null" json:"customerName"` // puede ser nulo
 	CustomerId       string `gorm:"size:100;not null;unique" json:"customerId"`
 	IsBusiness       bool   `gorm:"not null" json:"isBusiness"`
 	Address          string `gorm:"size:100" json:"address,omitempty"`
