@@ -255,7 +255,7 @@ func (cc *CustomerController) SearchCustomersByLastName(c *gin.Context) {
 		return
 	}
 
-	query := c.Query("lastname")
+	query := c.Query("lastName")
 
 	customers, err := cc.Service.SearchCustomersByLastName(query)
 	if err != nil {
