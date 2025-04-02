@@ -108,10 +108,6 @@ func RegisterAuthorizationRoutes(router *gin.Engine, controller *controllers.Aut
 	router.GET("/auth/check-permission", controller.CheckUserPermission)
 }
 
-func RegisterUserLogRoutes(router *gin.Engine, controller *controllers.UserLogController) {
-	router.GET("/user-log/:id", controller.GetAllLogsFromUser)
-}
-
 func RegisterAppointmentRoutes(router *gin.Engine, controller *controllers.AppointmentController) {
 	router.GET("/appointment/:id", controller.GetAppointmentByID)
 	router.GET("/appointments", controller.GetAllAppointments)

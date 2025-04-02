@@ -15,31 +15,43 @@ import (
 type AdditionalExpenseController struct {
 	Service *services.AdditionalExpenseService
 	Auth    *utilities.AuthorizationUtil
+	Log     *utilities.LogUtil
 }
 
-func NewAdditionalExpenseController(service *services.AdditionalExpenseService, auth *utilities.AuthorizationUtil) *AdditionalExpenseController {
-	return &AdditionalExpenseController{Service: service, Auth: auth}
+func NewAdditionalExpenseController(service *services.AdditionalExpenseService,
+	auth *utilities.AuthorizationUtil, log *utilities.LogUtil) *AdditionalExpenseController {
+	return &AdditionalExpenseController{Service: service, Auth: auth, Log: log}
 }
 
 func (aec *AdditionalExpenseController) GetAdditionalExpenseByID(c *gin.Context) {
-	permissionId := config.PERMISSION_GET_ADDITIONAL_EXPENSE_BY_ID
+	idParam := c.Param("id")
 
-	if !aec.Auth.CheckPermission(c, permissionId) {
+	// Attempt to retrieve AdditionalExpense, with log validation
+	if aec.Log.RegisterLog(c, "Attempting to retrieve AdditionalExpense with ID: "+idParam) != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error registering log"})
 		return
 	}
 
-	idParam := c.Param("id")
+	permissionId := config.PERMISSION_GET_ADDITIONAL_EXPENSE_BY_ID
+	if !aec.Auth.CheckPermission(c, permissionId) {
+		_ = aec.Log.RegisterLog(c, "Access denied for GetAdditionalExpenseByID")
+		return
+	}
 
 	additionalExpense, err := aec.Service.GetAdditionalExpenseByID(idParam)
 	if err != nil {
+		_ = aec.Log.RegisterLog(c, "Error retrieving AdditionalExpense with ID "+idParam+": "+err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving Additional Expense"})
 		return
 	}
 
 	if additionalExpense == nil {
+		_ = aec.Log.RegisterLog(c, "AdditionalExpense with ID "+idParam+" not found")
 		c.JSON(http.StatusNotFound, gin.H{"error": "Additional Expense not found"})
 		return
 	}
+
+	_ = aec.Log.RegisterLog(c, "Successfully retrieved AdditionalExpense with ID: "+idParam)
 
 	c.JSON(http.StatusOK, additionalExpense)
 }

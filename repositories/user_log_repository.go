@@ -14,12 +14,9 @@ func NewUserLogRepository(db *gorm.DB) *UserLogRepository {
 	return &UserLogRepository{DB: db}
 }
 
-func (r *UserLogRepository) CreateUserLog(log *models.UserLog) error {
-	return r.DB.Create(log).Error
-}
-
-func (r *UserLogRepository) GetUserLogs(userID string) ([]models.UserLog, error) {
-	var userLogs []models.UserLog
-	err := r.DB.Where("user_id = ?", userID).Order("date_time DESC").Find(&userLogs).Error
-	return userLogs, err
+func (r *UserLogRepository) CreateUserLog(userLog *models.UserLog) (*models.UserLog, error) {
+	if err := r.DB.Create(userLog).Error; err != nil {
+		return nil, err
+	}
+	return userLog, nil
 }

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"time"
 	"totesbackend/models"
 	"totesbackend/repositories"
 )
@@ -13,7 +14,12 @@ func NewUserLogService(repo *repositories.UserLogRepository) *UserLogService {
 	return &UserLogService{Repo: repo}
 }
 
-// Obtener logs de un usuario
-func (s *UserLogService) GetUserLogs(userID string) ([]models.UserLog, error) {
-	return s.Repo.GetUserLogs(userID)
+func (s *UserLogService) CreateUserLog(userEmail, logMessage string) (*models.UserLog, error) {
+	userLog := &models.UserLog{
+		UserEmail: userEmail,
+		Log:       logMessage,
+		DateTime:  time.Now(),
+	}
+
+	return s.Repo.CreateUserLog(userLog)
 }

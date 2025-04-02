@@ -18,6 +18,7 @@ import (
 var db *gorm.DB
 var router *gin.Engine
 var authUtil *utilities.AuthorizationUtil
+var logUtil *utilities.LogUtil
 
 func SetupAndRunApp() error {
 	// load env
@@ -37,7 +38,7 @@ func SetupAndRunApp() error {
 
 	db = database.GetDB()
 	authUtil = utilities.NewAuthorizationUtil(services.NewAuthorizationService(repositories.NewAuthorizationRepository(db)))
-
+	logUtil = utilities.NewLogUtil(services.NewUserLogService(repositories.NewUserLogRepository(db)))
 	router = gin.Default()
 	database.MigrateDB() // recordar descomentar para inicializar la base de datos
 
@@ -63,7 +64,6 @@ func SetupAndRunApp() error {
 	setUpHistoricalItemPriceRouter()
 	setUpCommentRouter()
 	setUpAuthRouter()
-	setUpUserLogRouter()
 	setUpAppointmentRouter()
 	setUpCustomerRouter()
 	setUpOrderStateTypeRouter()
@@ -144,7 +144,7 @@ func setUpUserRouter() {
 func setUpAdditionalExpenseRouter() {
 	addRepo := repositories.NewAdditionalExpenseRepository(db)
 	addService := services.NewAdditionalExpenseService(addRepo)
-	addController := controllers.NewAdditionalExpenseController(addService, authUtil)
+	addController := controllers.NewAdditionalExpenseController(addService, authUtil, logUtil)
 	routes.RegisterAdditionalExpenseRoutes(router, addController)
 }
 
@@ -167,13 +167,6 @@ func setUpAuthRouter() {
 	authService := services.NewAuthorizationService(authRepo)
 	authController := controllers.NewAuthorizationController(authService)
 	routes.RegisterAuthorizationRoutes(router, authController)
-}
-
-func setUpUserLogRouter() {
-	userLogRepo := repositories.NewUserLogRepository(db)
-	userLogService := services.NewUserLogService(userLogRepo)
-	userLogController := controllers.NewUserLogController(userLogService, authUtil)
-	routes.RegisterUserLogRoutes(router, userLogController)
 }
 
 func setUpAppointmentRouter() {
