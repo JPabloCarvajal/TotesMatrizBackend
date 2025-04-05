@@ -13,10 +13,12 @@ import (
 type TaxTypeController struct {
 	Service *services.TaxTypeService
 	Auth    *utilities.AuthorizationUtil
+	Log     *utilities.LogUtil
 }
 
-func NewTaxTypeController(service *services.TaxTypeService, auth *utilities.AuthorizationUtil) *TaxTypeController {
-	return &TaxTypeController{Service: service, Auth: auth}
+func NewTaxTypeController(service *services.TaxTypeService,
+	auth *utilities.AuthorizationUtil, log *utilities.LogUtil) *TaxTypeController {
+	return &TaxTypeController{Service: service, Auth: auth, Log: log}
 }
 
 func (ttc *TaxTypeController) GetTaxTypeByID(c *gin.Context) {

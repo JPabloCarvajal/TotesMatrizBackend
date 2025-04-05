@@ -102,7 +102,7 @@ func setUpRoleRouter() {
 func setUpItemTypeRouter() {
 	itemTypeRepo := repositories.NewItemTypeRepository(db)
 	itemTypeService := services.NewItemTypeService(itemTypeRepo)
-	itemTypeController := controllers.NewItemTypeController(itemTypeService, authUtil)
+	itemTypeController := controllers.NewItemTypeController(itemTypeService, authUtil, logUtil)
 	routes.RegisterItemTypeRoutes(router, itemTypeController)
 }
 
@@ -116,7 +116,7 @@ func setUpUserTypeRouter() {
 func setUpItemRouter() {
 	itemRepo := repositories.NewItemRepository(db)
 	itemService := services.NewItemService(itemRepo)
-	itemController := controllers.NewItemController(itemService, authUtil)
+	itemController := controllers.NewItemController(itemService, authUtil, logUtil)
 	routes.RegisterItemRoutes(router, itemController)
 }
 
@@ -151,7 +151,7 @@ func setUpAdditionalExpenseRouter() {
 func setUpHistoricalItemPriceRouter() {
 	hisRepo := repositories.NewHistoricalItemPriceRepository(db)
 	hisService := services.NewHistoricalItemPriceService(hisRepo)
-	hisController := controllers.NewHistoricalItemPriceController(hisService, authUtil)
+	hisController := controllers.NewHistoricalItemPriceController(hisService, authUtil, logUtil)
 	routes.RegisterHistoricalItemPriceRoutes(router, hisController)
 }
 
@@ -172,14 +172,14 @@ func setUpAuthRouter() {
 func setUpAppointmentRouter() {
 	appointmentRepo := repositories.NewAppointmentRepository(db)
 	appointmentService := services.NewAppointmentService(appointmentRepo)
-	appointmentController := controllers.NewAppointmentController(appointmentService, authUtil)
+	appointmentController := controllers.NewAppointmentController(appointmentService, authUtil, logUtil)
 	routes.RegisterAppointmentRoutes(router, appointmentController)
 }
 
 func setUpCustomerRouter() {
 	customerRepo := repositories.NewCustomerRepository(db)
 	customerService := services.NewCustomerService(customerRepo)
-	customerController := controllers.NewCustomerController(customerService, authUtil)
+	customerController := controllers.NewCustomerController(customerService, authUtil, logUtil)
 	routes.RegisterCustomerRoutes(router, customerController)
 
 }
@@ -208,7 +208,7 @@ func setUpPurchaseOrderRouter() {
 func setUpDiscountTypeRouter() {
 	discountTypeRepo := repositories.NewDiscountTypeRepository(db)
 	discountTypeService := services.NewDiscountTypeService(discountTypeRepo)
-	discountTypeController := controllers.NewDiscountTypeController(discountTypeService, authUtil)
+	discountTypeController := controllers.NewDiscountTypeController(discountTypeService, authUtil, logUtil)
 	routes.RegisterDiscountTypeRoutes(router, discountTypeController)
 }
 
@@ -222,7 +222,7 @@ func setUpUserCredentialValidationRouter() {
 func setUpTaxTypeRouter() {
 	taxTypeRepo := repositories.NewTaxTypeRepository(db)
 	taxTypeService := services.NewTaxTypeService(taxTypeRepo)
-	taxTypeController := controllers.NewTaxTypeController(taxTypeService, authUtil)
+	taxTypeController := controllers.NewTaxTypeController(taxTypeService, authUtil, logUtil)
 	routes.RegisterTaxTypeRoutes(router, taxTypeController)
 }
 
@@ -246,7 +246,7 @@ func setUpInvoice() {
 
 	billingService := services.NewBillingService(billingRepo, discountRepo, taxRepo)
 	invoiceService := services.NewInvoiceService(invoiceRepo, itemRepo, billingService)
-	invoiceController := controllers.NewInvoiceController(invoiceService, authUtil)
+	invoiceController := controllers.NewInvoiceController(invoiceService, authUtil, logUtil)
 
 	routes.RegisterInvoice(router, invoiceController)
 }
