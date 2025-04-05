@@ -93,3 +93,7 @@ func (s *PurchaseOrderService) UpdatePurchaseOrderState(id string, state int) (*
 func (s *PurchaseOrderService) UpdatePurchaseOrder(purchaseOrder *models.PurchaseOrder) error {
 	return s.PurchaseOrderRepo.UpdatePurchaseOrder(purchaseOrder)
 }
+
+func (s *PurchaseOrderService) GetPurchaseOrdersByStateID(stateID string) ([]models.PurchaseOrder, error) {
+	return s.PurchaseOrderRepo.GetPurchaseOrdersByStateID(stateID)
+}

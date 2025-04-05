@@ -81,21 +81,21 @@ func SetupAndRunApp() error {
 func setUpPermissionRouter() {
 	permissionRepo := repositories.NewPermissionRepository(db)
 	permissionService := services.NewPermissionService(permissionRepo)
-	permissionController := controllers.NewPermissionController(permissionService, authUtil)
+	permissionController := controllers.NewPermissionController(permissionService, authUtil, logUtil)
 	routes.RegisterPermissionRoutes(router, permissionController)
 }
 
 func setUpEmployeeRouter() {
 	employeeRepo := repositories.NewEmployeeRepository(db)
 	employeeService := services.NewEmployeeService(employeeRepo)
-	employeeController := controllers.NewEmployeeController(employeeService, authUtil)
+	employeeController := controllers.NewEmployeeController(employeeService, authUtil, logUtil)
 	routes.RegisterEmployeeRoutes(router, employeeController)
 }
 
 func setUpRoleRouter() {
 	roleRepo := repositories.NewRoleRepository(db)
 	roleService := services.NewRoleService(roleRepo)
-	roleController := controllers.NewRoleController(roleService, authUtil)
+	roleController := controllers.NewRoleController(roleService, authUtil, logUtil)
 	routes.RegisterRoleRoutes(router, roleController)
 }
 
@@ -109,7 +109,7 @@ func setUpItemTypeRouter() {
 func setUpUserTypeRouter() {
 	userTypeRepo := repositories.NewUserTypeRepository(db)
 	userTypeService := services.NewUserTypeService(userTypeRepo)
-	userTypeController := controllers.NewUserTypeController(userTypeService, authUtil)
+	userTypeController := controllers.NewUserTypeController(userTypeService, authUtil, logUtil)
 	routes.RegisterUserTypeRoutes(router, userTypeController)
 }
 
@@ -123,21 +123,21 @@ func setUpItemRouter() {
 func setUpUserStateTypeRouter() {
 	userStateTypeRepo := repositories.NewUserStateTypeRepository(db)
 	userStateTypeService := services.NewUserStateTypeService(userStateTypeRepo)
-	userStateTypeController := controllers.NewUserStateTypeController(userStateTypeService, authUtil)
+	userStateTypeController := controllers.NewUserStateTypeController(userStateTypeService, authUtil, logUtil)
 	routes.RegisterUserStateTypeRoutes(router, userStateTypeController)
 }
 
 func setUpIdentifierTypeRouter() {
 	identifierTypeRepo := repositories.NewIdentifierTypeRepository(db)
 	identifierTypeService := services.NewIdentifierTypeService(identifierTypeRepo)
-	identifierTypeController := controllers.NewIdentifierTypeController(identifierTypeService, authUtil)
+	identifierTypeController := controllers.NewIdentifierTypeController(identifierTypeService, authUtil, logUtil)
 	routes.RegisterIdentifierTypeRoutes(router, identifierTypeController)
 }
 
 func setUpUserRouter() {
 	userRepo := repositories.NewUserRepository(db)
 	userService := services.NewUserService(userRepo)
-	userController := controllers.NewUserController(userService, authUtil)
+	userController := controllers.NewUserController(userService, authUtil, logUtil)
 	routes.RegisterUserRoutes(router, userController)
 }
 
@@ -158,7 +158,7 @@ func setUpHistoricalItemPriceRouter() {
 func setUpCommentRouter() {
 	commentRepo := repositories.NewCommentRepository(db)
 	commentService := services.NewCommentService(commentRepo)
-	commentController := controllers.NewCommentController(commentService, authUtil)
+	commentController := controllers.NewCommentController(commentService, authUtil, logUtil)
 	routes.RegisterCommentRoutes(router, commentController)
 }
 
@@ -187,7 +187,7 @@ func setUpCustomerRouter() {
 func setUpOrderStateTypeRouter() {
 	orderStateTypeRepo := repositories.NewOrderStateTypeRepository(db)
 	orderStateTypeService := services.NewOrderStateTypeService(orderStateTypeRepo)
-	orderStateTypeController := controllers.NewOrderStateTypeController(orderStateTypeService, authUtil)
+	orderStateTypeController := controllers.NewOrderStateTypeController(orderStateTypeService, authUtil, logUtil)
 	routes.RegisterOrderStateTypeRoutes(router, orderStateTypeController)
 }
 
@@ -200,7 +200,7 @@ func setUpPurchaseOrderRouter() {
 
 	billingService := services.NewBillingService(billingRepo, discountRepo, taxRepo)
 	purchaseOrderService := services.NewPurchaseOrderService(purchaseOrderRepo, itemRepo, billingService)
-	purchaseOrderController := controllers.NewPurchaseOrderController(purchaseOrderService, authUtil)
+	purchaseOrderController := controllers.NewPurchaseOrderController(purchaseOrderService, authUtil, logUtil)
 
 	routes.RegisterPurchaseOrderRoutes(router, purchaseOrderController)
 }
