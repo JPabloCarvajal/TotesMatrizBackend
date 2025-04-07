@@ -91,6 +91,10 @@ func (r *ItemRepository) UpdateItem(item *models.Item) (bool, error) {
 		return false, err
 	}
 
+	if err := r.DB.Model(&existingItem).Select("ItemState").Updates(item).Error; err != nil {
+		return false, err
+	}
+
 	return priceChanged, nil
 }
 
