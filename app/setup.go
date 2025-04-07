@@ -37,7 +37,8 @@ func SetupAndRunApp() error {
 	defer database.ClosePostgres()
 
 	db = database.GetDB()
-	authUtil = utilities.NewAuthorizationUtil(services.NewAuthorizationService(repositories.NewAuthorizationRepository(db)))
+	userRepo := repositories.NewUserRepository(db)
+	authUtil = utilities.NewAuthorizationUtil(services.NewAuthorizationService(repositories.NewAuthorizationRepository(db), userRepo))
 	logUtil = utilities.NewLogUtil(services.NewUserLogService(repositories.NewUserLogRepository(db)))
 	router = gin.Default()
 	database.MigrateDB() // recordar descomentar para inicializar la base de datos
@@ -164,8 +165,9 @@ func setUpCommentRouter() {
 
 func setUpAuthRouter() {
 	authRepo := repositories.NewAuthorizationRepository(db)
-	authService := services.NewAuthorizationService(authRepo)
-	authController := controllers.NewAuthorizationController(authService)
+	userRepo := repositories.NewUserRepository(db)
+	authService := services.NewAuthorizationService(authRepo, userRepo)
+	authController := controllers.NewAuthorizationController(authService, logUtil)
 	routes.RegisterAuthorizationRoutes(router, authController)
 }
 

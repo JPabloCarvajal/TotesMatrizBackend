@@ -106,6 +106,7 @@ func RegisterCommentRoutes(router *gin.Engine,
 
 func RegisterAuthorizationRoutes(router *gin.Engine, controller *controllers.AuthorizationController) {
 	router.GET("/auth/check-permission", controller.CheckUserPermission)
+	router.POST("/auth/login", controller.Login)
 }
 
 func RegisterAppointmentRoutes(router *gin.Engine, controller *controllers.AppointmentController) {

@@ -1,8 +1,10 @@
 package services
 
 import (
+	"fmt"
 	"totesbackend/models"
 	"totesbackend/repositories"
+	"totesbackend/services/utils"
 )
 
 type UserService struct {
@@ -42,5 +44,12 @@ func (s *UserService) UpdateUser(user *models.User) error {
 }
 
 func (s *UserService) CreateUser(user *models.User) (*models.User, error) {
+	hashedPassword, err := utils.HashPassword(user.Password)
+	if err != nil {
+		return nil, fmt.Errorf("error hashing password: %w", err)
+	}
+
+	user.Password = hashedPassword
+
 	return s.Repo.CreateUser(user)
 }
