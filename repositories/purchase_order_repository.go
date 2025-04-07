@@ -34,6 +34,24 @@ func (r *PurchaseOrderRepository) GetPurchaseOrderByID(id string) (*models.Purch
 	return &purchaseOrder, nil
 }
 
+func (r *PurchaseOrderRepository) GetPurchaseOrdersByStateID(stateID string) ([]models.PurchaseOrder, error) {
+	var purchaseOrders []models.PurchaseOrder
+	err := r.DB.Preload("Seller").
+		Preload("Responsible").
+		Preload("Customer").
+		Preload("OrderState").
+		Preload("Items.Item").
+		Preload("Discounts").
+		Preload("Taxes").
+		Where("order_state_id = ?", stateID).
+		Find(&purchaseOrders).Error
+
+	if err != nil {
+		return nil, err
+	}
+	return purchaseOrders, nil
+}
+
 func (r *PurchaseOrderRepository) GetPurchaseOrdersByCustomerID(customerID string) ([]models.PurchaseOrder, error) {
 	var purchaseOrders []models.PurchaseOrder
 	err := r.DB.Preload("Seller").

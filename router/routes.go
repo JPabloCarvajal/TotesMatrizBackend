@@ -138,14 +138,15 @@ func RegisterOrderStateTypeRoutes(router *gin.Engine, controller *controllers.Or
 }
 
 func RegisterPurchaseOrderRoutes(router *gin.Engine, controller *controllers.PurchaseOrderController) {
+
 	router.GET("/purchase-orders/:id", controller.GetPurchaseOrderByID)
 	router.GET("/purchase-orders", controller.GetAllPurchaseOrders)
 	router.GET("/purchase-orders/searchByID", controller.SearchPurchaseOrdersByID)
 	router.GET("/purchase-orders/customers/:customerID", controller.GetPurchaseOrdersByCustomerID)
 	router.GET("/purchase-orders/seller/:sellerID", controller.GetPurchaseOrdersBySellerID)
+	router.GET("/purchase-orders/state/:stateID", controller.GetPurchaseOrdersByStateID)
 	router.POST("/purchase-orders", controller.CreatePurchaseOrder)
 	router.PATCH("/purchase-orders/:id/state", controller.UpdatePurchaseOrderState)
-	//router.PUT("/purchaseorder/:id", controller.UpdatePurchaseOrder)
 
 }
 
