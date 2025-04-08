@@ -215,9 +215,9 @@ func setUpDiscountTypeRouter() {
 }
 
 func setUpUserCredentialValidationRouter() {
-	userCredentialValidationRepo := repositories.NewUserCredentialValidationRepository(db)
-	userCredentialValidationService := services.NewUserCredentialValidationService(userCredentialValidationRepo)
-	userCredentialValidationController := controllers.NewUserCredentialValidationController(userCredentialValidationService, authUtil)
+	userRepository := repositories.NewUserRepository(db)
+	userCredentialValidationService := services.NewUserCredentialValidationService(userRepository)
+	userCredentialValidationController := controllers.NewUserCredentialValidationController(userCredentialValidationService, authUtil, logUtil)
 	routes.RegisterUserCredentialValidationRoutes(router, userCredentialValidationController)
 }
 

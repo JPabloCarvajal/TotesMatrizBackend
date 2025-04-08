@@ -1,17 +1,32 @@
 package services
 
 import (
+	"errors"
 	"totesbackend/repositories"
+	"totesbackend/services/utils"
 )
 
 type UserCredentialValidationService struct {
-	Repo *repositories.UserCredentialValidationRepository
+	UserRepo *repositories.UserRepository
 }
 
-func NewUserCredentialValidationService(repo *repositories.UserCredentialValidationRepository) *UserCredentialValidationService {
-	return &UserCredentialValidationService{Repo: repo}
+func NewUserCredentialValidationService(userRepo *repositories.UserRepository) *UserCredentialValidationService {
+	return &UserCredentialValidationService{UserRepo: userRepo}
 }
 
-func (s *UserCredentialValidationService) ValidateUserCredentials(email, password string) (bool, error) {
-	return s.Repo.ValidateUserCredentials(email, password)
+func (s *UserCredentialValidationService) ValidateUserCredentials(email, password string) error {
+	user, err := s.UserRepo.GetUserByEmail(email)
+	if err != nil {
+		return errors.New("invalid email or password")
+	}
+
+	if user.UserStateType.Name != "Active" {
+		return errors.New("user is not active")
+	}
+
+	if !utils.CheckPasswordHash(password, user.Password) {
+		return errors.New("invalid email or password")
+	}
+
+	return nil
 }
