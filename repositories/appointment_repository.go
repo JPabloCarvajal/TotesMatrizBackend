@@ -91,3 +91,22 @@ func (r *AppointmentRepository) GetAppointmentByCustomerIDAndDate(customerID int
 	}
 	return &appointment, nil
 }
+
+func (r *AppointmentRepository) CountAppointmentsAtDateTime(dateTime time.Time) (int64, error) {
+	var count int64
+	err := r.DB.Model(&models.Appointment{}).
+		Where("date_time = ?", dateTime).
+		Count(&count).Error
+	return count, err
+}
+
+func (r *AppointmentRepository) DeleteAppointmentByID(id int) error {
+	result := r.DB.Delete(&models.Appointment{}, id)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+	return nil
+}

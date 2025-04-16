@@ -118,6 +118,7 @@ func RegisterAppointmentRoutes(router *gin.Engine, controller *controllers.Appoi
 	router.POST("/appointments", controller.CreateAppointment)
 	router.PUT("/appointments/:id", controller.UpdateAppointment)
 	router.GET("/appointments/byCustomerAndDate", controller.GetAppointmentByCustomerIDAndDate)
+	router.DELETE("/appointments/deleteAppointment", controller.DeleteAppointmentByID)
 }
 
 func RegisterCustomerRoutes(router *gin.Engine, controller *controllers.CustomerController) {
