@@ -110,3 +110,26 @@ func (r *AppointmentRepository) DeleteAppointmentByID(id int) error {
 	}
 	return nil
 }
+
+func (r *AppointmentRepository) CountAppointmentsByHourOnDate(date time.Time) ([]int, error) {
+	counts := make([]int, 9) // from 9:00 to 17:00
+
+	startOfDay := time.Date(date.Year(), date.Month(), date.Day(), 9, 0, 0, 0, date.Location())
+	endOfDay := time.Date(date.Year(), date.Month(), date.Day(), 17, 59, 59, 0, date.Location())
+
+	var appointments []models.Appointment
+	err := r.DB.Where("date_time BETWEEN ? AND ?", startOfDay, endOfDay).Find(&appointments).Error
+	if err != nil {
+		return nil, err
+	}
+
+	for _, appointment := range appointments {
+		hour := appointment.DateTime.Hour()
+		if hour >= 9 && hour <= 17 {
+			index := hour - 9
+			counts[index]++
+		}
+	}
+
+	return counts, nil
+}

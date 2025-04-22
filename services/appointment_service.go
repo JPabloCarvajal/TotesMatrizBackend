@@ -63,3 +63,10 @@ func (s *AppointmentService) GetAppointmentByCustomerIDAndDate(customerID int, d
 func (s *AppointmentService) DeleteAppointmentByID(id int) error {
 	return s.Repo.DeleteAppointmentByID(id)
 }
+
+func (s *AppointmentService) GetHourlyAppointmentCount(date time.Time) ([]int, error) {
+	if s.Repo == nil {
+		return nil, errors.New("appointment repository is not initialized")
+	}
+	return s.Repo.CountAppointmentsByHourOnDate(date)
+}

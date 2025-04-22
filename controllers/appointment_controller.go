@@ -371,4 +371,35 @@ func (ac *AppointmentController) DeleteAppointmentByID(c *gin.Context) {
 
 	_ = ac.Log.RegisterLog(c, "Appointment deleted successfully for ID: "+strconv.Itoa(id))
 	c.JSON(http.StatusOK, gin.H{"message": "Appointment deleted successfully"})
+
+}
+
+func (c *AppointmentController) GetAppointmentsByHourRange(ctx *gin.Context) {
+
+	permissionId := config.PERMISSION_GET_APPOINTMENTS_BY_HOUR
+	if !c.Auth.CheckPermission(ctx, permissionId) {
+		_ = c.Log.RegisterLog(ctx, "Access denied for CreateAppointment")
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "No tienes permisos para crear citas"})
+		return
+	}
+
+	dateParam := ctx.Query("date")
+	if dateParam == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Se requiere el parámetro 'date' en formato YYYY-MM-DD"})
+		return
+	}
+
+	date, err := time.Parse("2006-01-02", dateParam)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Formato de fecha inválido. Usa YYYY-MM-DD"})
+		return
+	}
+
+	counts, err := c.Service.GetHourlyAppointmentCount(date)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error al contar las citas: " + err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"date": dateParam, "appointmentsPerHour": counts})
 }
