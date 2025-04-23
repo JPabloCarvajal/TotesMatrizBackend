@@ -207,34 +207,38 @@ func (ac *AppointmentController) GetAppointmentsByCustomerID(c *gin.Context) {
 }
 
 func (ac *AppointmentController) CreateAppointment(c *gin.Context) {
-
 	if ac.Log.RegisterLog(c, "Attempting to create appointment") != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error registering log"})
 		return
 	}
 
 	permissionId := config.PERMISSION_CREATE_APPOINTMENT
-
 	if !ac.Auth.CheckPermission(c, permissionId) {
 		_ = ac.Log.RegisterLog(c, "Access denied for CreateAppointment")
+		c.JSON(http.StatusForbidden, gin.H{"error": "No tienes permisos para crear citas"})
 		return
 	}
 
 	var appointment models.Appointment
 	if err := c.ShouldBindJSON(&appointment); err != nil {
 		_ = ac.Log.RegisterLog(c, "Invalid JSON format when creating appointment")
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Formato JSON inválido"})
 		return
 	}
 
 	createdAppointment, err := ac.Service.CreateAppointment(appointment)
 	if err != nil {
-		_ = ac.Log.RegisterLog(c, "Error creating appointment")
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating appointment"})
+		if err.Error() == "ya existen 3 citas agendadas para esta fecha y hora" {
+			_ = ac.Log.RegisterLog(c, "limite de citas alcanzado :v")
+			c.JSON(http.StatusBadRequest, gin.H{"error": "no se puede crear la cita. Ya hay 3 citas agendadas para esta fecha y hora."})
+		} else {
+			_ = ac.Log.RegisterLog(c, "Error creando cita")
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al crear la cita"})
+		}
 		return
 	}
 
-	_ = ac.Log.RegisterLog(c, "Appointment created successfully")
+	_ = ac.Log.RegisterLog(c, "Cita creada exitosamente")
 	c.JSON(http.StatusCreated, createdAppointment)
 }
 
@@ -331,4 +335,71 @@ func (ac *AppointmentController) GetAppointmentByCustomerIDAndDate(c *gin.Contex
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+func (ac *AppointmentController) DeleteAppointmentByID(c *gin.Context) {
+	if ac.Log.RegisterLog(c, "Attempting to delete appointment") != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error registering log"})
+		return
+	}
+
+	permissionId := config.PERMISSION_DELETE_APPOINTMENT
+	if !ac.Auth.CheckPermission(c, permissionId) {
+		_ = ac.Log.RegisterLog(c, "Access denied for DeleteAppointmentByID")
+		c.JSON(http.StatusForbidden, gin.H{"error": "No tienes permisos para eliminar citas"})
+		return
+	}
+
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		_ = ac.Log.RegisterLog(c, "Invalid appointment ID: "+c.Param("id"))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid appointment ID"})
+		return
+	}
+
+	err = ac.Service.DeleteAppointmentByID(id)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			_ = ac.Log.RegisterLog(c, "Appointment not found for ID: "+strconv.Itoa(id))
+			c.JSON(http.StatusNotFound, gin.H{"error": "Appointment not found"})
+		} else {
+			_ = ac.Log.RegisterLog(c, "Error deleting appointment")
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+		return
+	}
+
+	_ = ac.Log.RegisterLog(c, "Appointment deleted successfully for ID: "+strconv.Itoa(id))
+	c.JSON(http.StatusOK, gin.H{"message": "Appointment deleted successfully"})
+
+}
+
+func (c *AppointmentController) GetAppointmentsByHourRange(ctx *gin.Context) {
+
+	permissionId := config.PERMISSION_GET_APPOINTMENTS_BY_HOUR
+	if !c.Auth.CheckPermission(ctx, permissionId) {
+		_ = c.Log.RegisterLog(ctx, "Access denied for CreateAppointment")
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "No tienes permisos para crear citas"})
+		return
+	}
+
+	dateParam := ctx.Query("date")
+	if dateParam == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Se requiere el parámetro 'date' en formato YYYY-MM-DD"})
+		return
+	}
+
+	date, err := time.Parse("2006-01-02", dateParam)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Formato de fecha inválido. Usa YYYY-MM-DD"})
+		return
+	}
+
+	counts, err := c.Service.GetHourlyAppointmentCount(date)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error al contar las citas: " + err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"date": dateParam, "appointmentsPerHour": counts})
 }
