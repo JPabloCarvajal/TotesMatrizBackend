@@ -28,3 +28,7 @@ func (r *DiscountTypeRepository) GetDiscountTypeByID(id string) (*models.Discoun
 	}
 	return &discountType, nil
 }
+
+func (r *DiscountTypeRepository) CreateDiscountType(discount *models.DiscountType) error {
+	return r.DB.Create(discount).Error
+}

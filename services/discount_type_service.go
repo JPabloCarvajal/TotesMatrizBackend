@@ -20,3 +20,7 @@ func (s *DiscountTypeService) GetAllDiscountTypes() ([]models.DiscountType, erro
 func (s *DiscountTypeService) GetDiscountTypeByID(id string) (*models.DiscountType, error) {
 	return s.Repo.GetDiscountTypeByID(id)
 }
+
+func (s *DiscountTypeService) CreateDiscountType(discount *models.DiscountType) error {
+	return s.Repo.CreateDiscountType(discount)
+}

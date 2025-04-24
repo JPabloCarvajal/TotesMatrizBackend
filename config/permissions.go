@@ -91,6 +91,7 @@ const (
 	PERMISSION_GET_PURCHASE_ORDERS_BY_STATE_ID         = 17009
 	PERMISSION_GET_DISCOUNT_TYPE_BY_ID                 = 18001
 	PERMISSION_GET_ALL_DISCOUNT_TYPES                  = 18002
+	PERMISSION_CREATE_DISCOUNT_TYPE                    = 18003
 	PERMISSION_GET_INVOICE_BY_ID                       = 19001
 	PERMISSION_GET_ALL_INVOICES                        = 19002
 	PERMISSION_SEARCH_INVOICE_BY_ID                    = 19003
@@ -100,4 +101,5 @@ const (
 	PERMISSION_CALCULATE_TOTAL                         = 20002
 	PERMISSION_GET_TAX_TYPE_BY_ID                      = 21001
 	PERMISSION_GET_ALL_TAX_TYPES                       = 21002
+	PERMISSION_CREATE_TAX_TYPE                         = 21003
 )

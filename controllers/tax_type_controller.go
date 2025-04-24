@@ -5,6 +5,7 @@ import (
 
 	"totesbackend/config"
 	"totesbackend/controllers/utilities"
+	"totesbackend/models"
 	"totesbackend/services"
 
 	"github.com/gin-gonic/gin"
@@ -51,4 +52,34 @@ func (ttc *TaxTypeController) GetAllTaxTypes(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, taxTypes)
+}
+
+func (ttc *TaxTypeController) CreateTaxType(c *gin.Context) {
+	if ttc.Log.RegisterLog(c, "Attempting to create a new tax type") != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error registering log"})
+		return
+	}
+
+	permissionId := config.PERMISSION_CREATE_TAX_TYPE
+	if !ttc.Auth.CheckPermission(c, permissionId) {
+		_ = ttc.Log.RegisterLog(c, "Access denied for CreateTaxType")
+		return
+	}
+
+	var tax models.TaxType
+	if err := c.ShouldBindJSON(&tax); err != nil {
+		_ = ttc.Log.RegisterLog(c, "Invalid input for tax type creation: "+err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Datos inválidos del impuesto"})
+		return
+	}
+
+	err := ttc.Service.CreateTaxType(&tax)
+	if err != nil {
+		_ = ttc.Log.RegisterLog(c, "Failed to create tax type: "+err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "No se pudo crear el impuesto"})
+		return
+	}
+
+	_ = ttc.Log.RegisterLog(c, "Successfully created new tax type")
+	c.JSON(http.StatusCreated, tax)
 }
