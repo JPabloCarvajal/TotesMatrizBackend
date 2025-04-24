@@ -155,6 +155,7 @@ func RegisterPurchaseOrderRoutes(router *gin.Engine, controller *controllers.Pur
 func RegisterDiscountTypeRoutes(router *gin.Engine, controller *controllers.DiscountTypeController) {
 	router.GET("/discount-types", controller.GetAllDiscountTypes)
 	router.GET("/discount-types/:id", controller.GetDiscountTypeByID)
+	router.POST("/discount-types", controller.CreateDiscountType)
 }
 
 func RegisterUserCredentialValidationRoutes(router *gin.Engine, controller *controllers.UserCredentialValidationController) {
@@ -164,6 +165,7 @@ func RegisterUserCredentialValidationRoutes(router *gin.Engine, controller *cont
 func RegisterTaxTypeRoutes(router *gin.Engine, controller *controllers.TaxTypeController) {
 	router.GET("/tax-types", controller.GetAllTaxTypes)
 	router.GET("/tax-types/:id", controller.GetTaxTypeByID)
+	router.POST("/tax-types", controller.CreateTaxType)
 }
 
 func RegisterBillingRoutes(router *gin.Engine, controller *controllers.BillingController) {

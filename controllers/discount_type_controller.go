@@ -5,6 +5,7 @@ import (
 
 	"totesbackend/config"
 	"totesbackend/controllers/utilities"
+	"totesbackend/models"
 	"totesbackend/services"
 
 	"github.com/gin-gonic/gin"
@@ -66,4 +67,34 @@ func (dtc *DiscountTypeController) GetAllDiscountTypes(c *gin.Context) {
 
 	_ = dtc.Log.RegisterLog(c, "Successfully retrieved all discount types")
 	c.JSON(http.StatusOK, discountTypes)
+}
+
+func (dtc *DiscountTypeController) CreateDiscountType(c *gin.Context) {
+	if dtc.Log.RegisterLog(c, "Attempting to create a new discount type") != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error registering log"})
+		return
+	}
+
+	permissionId := config.PERMISSION_CREATE_DISCOUNT_TYPE
+	if !dtc.Auth.CheckPermission(c, permissionId) {
+		_ = dtc.Log.RegisterLog(c, "Access denied for CreateDiscountType")
+		return
+	}
+
+	var discount models.DiscountType
+	if err := c.ShouldBindJSON(&discount); err != nil {
+		_ = dtc.Log.RegisterLog(c, "Invalid input for discount creation: "+err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	err := dtc.Service.CreateDiscountType(&discount)
+	if err != nil {
+		_ = dtc.Log.RegisterLog(c, "Failed to create discount type: "+err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not create discount type"})
+		return
+	}
+
+	_ = dtc.Log.RegisterLog(c, "Successfully created new discount type")
+	c.JSON(http.StatusCreated, discount)
 }

@@ -28,3 +28,7 @@ func (r *TaxTypeRepository) GetTaxTypeByID(id string) (*models.TaxType, error) {
 	}
 	return &taxType, nil
 }
+
+func (r *TaxTypeRepository) CreateTaxType(taxType *models.TaxType) error {
+	return r.DB.Create(taxType).Error
+}

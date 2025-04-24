@@ -20,3 +20,7 @@ func (s *TaxTypeService) GetAllTaxTypes() ([]models.TaxType, error) {
 func (s *TaxTypeService) GetTaxTypeByID(id string) (*models.TaxType, error) {
 	return s.Repo.GetTaxTypeByID(id)
 }
+
+func (s *TaxTypeService) CreateTaxType(taxType *models.TaxType) error {
+	return s.Repo.CreateTaxType(taxType)
+}
