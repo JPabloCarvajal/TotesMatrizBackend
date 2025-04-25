@@ -12,15 +12,17 @@ import (
 type PurchaseOrderService struct {
 	PurchaseOrderRepo *repositories.PurchaseOrderRepository
 	ItemRepo          *repositories.ItemRepository
+	InvoiceRepo       *repositories.InvoiceRepository
 	BillingService    *BillingService
 }
 
 func NewPurchaseOrderService(purchaseOrderRepo *repositories.PurchaseOrderRepository,
-	itemRepo *repositories.ItemRepository, billingService *BillingService) *PurchaseOrderService {
+	itemRepo *repositories.ItemRepository, billingService *BillingService, invoiceRepo *repositories.InvoiceRepository) *PurchaseOrderService {
 	return &PurchaseOrderService{
 		PurchaseOrderRepo: purchaseOrderRepo,
 		ItemRepo:          itemRepo,
 		BillingService:    billingService,
+		InvoiceRepo:       invoiceRepo,
 	}
 }
 
@@ -87,22 +89,26 @@ func (s *PurchaseOrderService) GetPurchaseOrdersBySellerID(sellerID string) ([]m
 	return s.PurchaseOrderRepo.GetPurchaseOrdersBySellerID(sellerID)
 }
 
-func (s *PurchaseOrderService) ChangePurchaseOrderState(id string, targetStateID string) (*models.PurchaseOrder, error) {
+func (s *PurchaseOrderService) ChangePurchaseOrderState(id string, targetStateID string) (*models.PurchaseOrder, *models.Invoice, error) {
 	po, err := s.PurchaseOrderRepo.GetPurchaseOrderByID(id)
+	println(po.ID)
 	if err != nil {
-		return nil, errors.New("orden de compra no encontrada con ID: " + id)
+		return nil, nil, err
 	}
 
-	stateMachine, err := orderstatemachine.NewStateMachine(po, s.ItemRepo, s.PurchaseOrderRepo)
+	stateMachine, err := orderstatemachine.NewStateMachine(po, s.ItemRepo, s.PurchaseOrderRepo, s.InvoiceRepo)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if err := stateMachine.ChangeState(targetStateID); err != nil {
-		return nil, err
+		return nil, nil, err
+	}
+	if generator, ok := stateMachine.CurrentState.(orderstatemachine.InvoiceGenerator); ok {
+		return stateMachine.PurchaseOrder, generator.GetGeneratedInvoice(), nil
 	}
 
-	return stateMachine.PurchaseOrder, nil
+	return stateMachine.PurchaseOrder, nil, nil
 }
 
 func (s *PurchaseOrderService) UpdatePurchaseOrder(purchaseOrder *models.PurchaseOrder) error {

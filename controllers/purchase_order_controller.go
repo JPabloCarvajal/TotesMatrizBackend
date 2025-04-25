@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -315,14 +314,12 @@ func (poc *PurchaseOrderController) ChangePurchaseOrderState(c *gin.Context) {
 
 	if err := poc.Log.RegisterLog(c, "Attempting to update Purchase Order state"); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error registering log"})
-
 		return
 	}
 
 	if !poc.Auth.CheckPermission(c, permissionId) {
 		_ = poc.Log.RegisterLog(c, "Permission denied for UpdatePurchaseOrderState")
 		c.JSON(http.StatusForbidden, gin.H{"error": "Permission denied"})
-
 		return
 	}
 
@@ -335,20 +332,18 @@ func (poc *PurchaseOrderController) ChangePurchaseOrderState(c *gin.Context) {
 	if err := c.ShouldBindJSON(&request); err != nil {
 		_ = poc.Log.RegisterLog(c, "Error binding JSON for UpdatePurchaseOrderState: "+err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-
 		return
 	}
 
 	orderStateIDStr := strconv.Itoa(request.OrderStateID)
-	purchaseOrder, err := poc.Service.ChangePurchaseOrderState(id, orderStateIDStr)
 
+	purchaseOrder, invoice, err := poc.Service.ChangePurchaseOrderState(id, orderStateIDStr)
 	if err != nil {
 		_ = poc.Log.RegisterLog(c, err.Error())
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-
 		return
 	}
-	fmt.Println(purchaseOrder.OrderStateID)
+
 	purchaseOrderDTO := dtos.GetPurchaseOrderDTO{
 		ID:            purchaseOrder.ID,
 		SellerID:      purchaseOrder.SellerID,
@@ -363,8 +358,29 @@ func (poc *PurchaseOrderController) ChangePurchaseOrderState(c *gin.Context) {
 		Taxes:         extractTaxIds(purchaseOrder.Taxes),
 	}
 
+	// Crear el DTO del invoice si existe
+	var invoiceDTO *dtos.GetInvoiceDTO
+	if invoice != nil {
+		invoiceDTO = &dtos.GetInvoiceDTO{
+			ID:             invoice.ID,
+			EnterpriseData: invoice.EnterpriseData,
+			DateTime:       invoice.DateTime,
+			CustomerID:     invoice.CustomerID,
+			Total:          invoice.Total,
+			Subtotal:       invoice.Subtotal,
+			Items:          extractInvoiceBillingItems(invoice.Items),
+			Discounts:      extractDiscountIds(invoice.Discounts),
+			Taxes:          extractTaxIds(invoice.Taxes),
+		}
+	}
+
 	_ = poc.Log.RegisterLog(c, "Successfully updated Purchase Order state with ID: "+id)
-	c.JSON(http.StatusOK, purchaseOrderDTO)
+
+	// Enviar ambos DTOs como JSON
+	c.JSON(http.StatusOK, gin.H{
+		"purchase_order": purchaseOrderDTO,
+		"invoice":        invoiceDTO,
+	})
 }
 
 func (poc *PurchaseOrderController) CreatePurchaseOrder(c *gin.Context) {

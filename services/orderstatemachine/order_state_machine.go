@@ -14,14 +14,17 @@ type OrderStateMachine struct {
 	PurchaseOrder     *models.PurchaseOrder
 	ItemRepo          *repositories.ItemRepository
 	PurchaseOrderRepo *repositories.PurchaseOrderRepository
+	InvoiceRepo       *repositories.InvoiceRepository
 }
 
 // NewStateMachine construye la máquina y setea el estado actual según el estado de la orden
-func NewStateMachine(po *models.PurchaseOrder, ItemRepo *repositories.ItemRepository, PurchaseOrderRepo *repositories.PurchaseOrderRepository) (*OrderStateMachine, error) {
+func NewStateMachine(po *models.PurchaseOrder,
+	itemRepo *repositories.ItemRepository, purchaseOrderRepo *repositories.PurchaseOrderRepository, invoiceRepo *repositories.InvoiceRepository) (*OrderStateMachine, error) {
 	sm := &OrderStateMachine{
 		PurchaseOrder:     po,
-		ItemRepo:          ItemRepo,
-		PurchaseOrderRepo: PurchaseOrderRepo,
+		ItemRepo:          itemRepo,
+		PurchaseOrderRepo: purchaseOrderRepo,
+		InvoiceRepo:       invoiceRepo,
 	}
 
 	// Determinar estado inicial en base al OrderStateID de la orden

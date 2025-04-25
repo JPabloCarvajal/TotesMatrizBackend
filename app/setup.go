@@ -199,9 +199,10 @@ func setUpPurchaseOrderRouter() {
 	billingRepo := repositories.NewItemRepository(db)
 	discountRepo := repositories.NewDiscountTypeRepository(db)
 	taxRepo := repositories.NewTaxTypeRepository(db)
+	invoiceRepo := repositories.NewInvoiceRepository(db)
 
 	billingService := services.NewBillingService(billingRepo, discountRepo, taxRepo)
-	purchaseOrderService := services.NewPurchaseOrderService(purchaseOrderRepo, itemRepo, billingService)
+	purchaseOrderService := services.NewPurchaseOrderService(purchaseOrderRepo, itemRepo, billingService, invoiceRepo)
 	purchaseOrderController := controllers.NewPurchaseOrderController(purchaseOrderService, authUtil, logUtil)
 
 	routes.RegisterPurchaseOrderRoutes(router, purchaseOrderController)

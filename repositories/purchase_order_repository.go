@@ -29,6 +29,7 @@ func (r *PurchaseOrderRepository) GetPurchaseOrderByID(id string) (*models.Purch
 		Preload("Taxes").
 		First(&purchaseOrder, "id = ?", id).Error
 
+	println(purchaseOrder.ID)
 	if err != nil {
 		return nil, err
 	}
