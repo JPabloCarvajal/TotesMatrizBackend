@@ -180,3 +180,8 @@ func RegisterInvoice(router *gin.Engine, controller *controllers.InvoiceControll
 	router.GET("/invoices/searchByPersonalId", controller.SearchInvoiceByCustomerPersonalId)
 	router.POST("/invoices", controller.CreateInvoice)
 }
+func RegisterExternalSaleRoutes(router *gin.Engine, controller *controllers.ExternalSaleController) {
+	router.GET("/external-sales/:id", controller.GetExternalSaleByID)
+	router.GET("/external-sales", controller.GetAllExternalSales)
+	router.POST("/external-sales", controller.CreateExternalSale)
+}

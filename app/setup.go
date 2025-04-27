@@ -74,6 +74,7 @@ func SetupAndRunApp() error {
 	setUpTaxTypeRouter()
 	setUpBillingRouter()
 	setUpInvoice()
+	setUpExternalSaleRouter()
 	router.Run("localhost:8080")
 
 	return nil
@@ -252,4 +253,12 @@ func setUpInvoice() {
 	invoiceController := controllers.NewInvoiceController(invoiceService, authUtil, logUtil)
 
 	routes.RegisterInvoice(router, invoiceController)
+}
+
+func setUpExternalSaleRouter() {
+	externalSaleRepo := repositories.NewExternalSaleRepository(db)
+	customerRepo := repositories.NewCustomerRepository(db)
+	externalSaleService := services.NewExternalSaleService(externalSaleRepo, customerRepo)
+	externalSaleController := controllers.NewExternalSaleController(externalSaleService, authUtil, logUtil)
+	routes.RegisterExternalSaleRoutes(router, externalSaleController)
 }

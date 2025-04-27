@@ -102,4 +102,7 @@ const (
 	PERMISSION_GET_TAX_TYPE_BY_ID                      = 21001
 	PERMISSION_GET_ALL_TAX_TYPES                       = 21002
 	PERMISSION_CREATE_TAX_TYPE                         = 21003
+	PERMISSION_GET_EXTERNAL_SALE_BY_ID                 = 22001
+	PERMISSION_GET_ALL_EXTERNAL_SALES                  = 22002
+	PERMISSION_CREATE_EXTERNAL_SALE                    = 22003
 )
