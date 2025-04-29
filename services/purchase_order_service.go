@@ -45,23 +45,8 @@ func (s *PurchaseOrderService) CreatePurchaseOrder(dto *dtos.CreatePurchaseOrder
 		return nil, err
 	}
 
-	// Convertir IDs de descuentos e impuestos
-	var discountIDs, taxIDs []string
-	for _, id := range dto.Discounts {
-		discountIDs = append(discountIDs, strconv.Itoa(id))
-	}
-	for _, id := range dto.Taxes {
-		taxIDs = append(taxIDs, strconv.Itoa(id))
-	}
-
-	// Calcular total
-	total, err := s.BillingService.CalculateTotal(discountIDs, taxIDs, dto.Items)
-	if err != nil {
-		return nil, err
-	}
-
 	// Crear la orden de compra
-	purchaseOrder, err := s.PurchaseOrderRepo.CreatePurchaseOrder(dto, subtotal, total)
+	purchaseOrder, err := s.PurchaseOrderRepo.CreatePurchaseOrder(dto, subtotal, subtotal)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +76,6 @@ func (s *PurchaseOrderService) GetPurchaseOrdersBySellerID(sellerID string) ([]m
 
 func (s *PurchaseOrderService) ChangePurchaseOrderState(id string, targetStateID string) (*models.PurchaseOrder, *models.Invoice, error) {
 	po, err := s.PurchaseOrderRepo.GetPurchaseOrderByID(id)
-	println(po.ID)
 	if err != nil {
 		return nil, nil, err
 	}

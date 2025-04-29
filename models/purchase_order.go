@@ -6,12 +6,12 @@ import (
 
 type PurchaseOrder struct {
 	ID            int                 `gorm:"primaryKey;autoIncrement" json:"id"`
-	SellerID      int                 `gorm:"not null" json:"seller_id"`
+	SellerID      *int                ` json:"seller_id"` // Ahora es puntero para ser nullable
 	Seller        Employee            `gorm:"foreignKey:SellerID;references:ID" json:"seller"`
-	CustomerID    int                 `gorm:"not null" json:"customer_id"`
+	CustomerID    *int                `json:"customer_id"` // También puntero
 	Customer      Customer            `gorm:"foreignKey:CustomerID;references:ID" json:"customer"`
-	ResponsibleID int                 `json:"responsible_id"`
-	Responsible   Employee            `gorm:"foreignKey:ResponsibleID;references:ID" json:"responsible"`
+	ResponsibleID *int                `json:"responsible_id"` // También puntero
+	Responsible   *Employee           `gorm:"foreignKey:ResponsibleID;references:ID" json:"responsible"`
 	DateTime      time.Time           `json:"date_time" time_format:"2006-01-02T15:04:05"`
 	Items         []PurchaseOrderItem `gorm:"foreignKey:PurchaseOrderID" json:"items"`
 	SubTotal      float64             `gorm:"not null" json:"sub_total"`

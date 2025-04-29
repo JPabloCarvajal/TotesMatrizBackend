@@ -413,23 +413,16 @@ func (poc *PurchaseOrderController) CreatePurchaseOrder(c *gin.Context) {
 	}
 
 	purchaseOrderDTO := dtos.GetPurchaseOrderDTO{
-		ID:            purchaseOrder.ID,
-		SellerID:      purchaseOrder.SellerID,
-		CustomerID:    purchaseOrder.CustomerID,
-		ResponsibleID: purchaseOrder.ResponsibleID,
-		DateTime:      purchaseOrder.DateTime,
-		SubTotal:      purchaseOrder.SubTotal,
-		Total:         purchaseOrder.Total,
-		OrderStateID:  purchaseOrder.OrderStateID,
-		Items:         extractPurchaseOrderBillingItems(purchaseOrder.Items),
-		Discounts:     extractDiscountIds(purchaseOrder.Discounts),
-		Taxes:         extractTaxIds(purchaseOrder.Taxes),
+		ID:           purchaseOrder.ID,
+		DateTime:     purchaseOrder.DateTime,
+		SubTotal:     purchaseOrder.SubTotal,
+		Total:        purchaseOrder.Total,
+		OrderStateID: purchaseOrder.OrderStateID,
 	}
 
 	_ = poc.Log.RegisterLog(c, "Successfully created Purchase Order with ID: "+strconv.Itoa(purchaseOrder.ID))
 	c.JSON(http.StatusCreated, purchaseOrderDTO)
 }
-
 func extractPurchaseOrderBillingItems(items []models.PurchaseOrderItem) []dtos.BillingItemDTO {
 	var billingItems []dtos.BillingItemDTO
 	for _, item := range items {

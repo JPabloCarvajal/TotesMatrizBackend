@@ -150,9 +150,9 @@ func (r *PurchaseOrderRepository) UpdatePurchaseOrder(purchaseOrder *models.Purc
 
 func (r *PurchaseOrderRepository) CreatePurchaseOrder(dto *dtos.CreatePurchaseOrderDTO, subtotal float64, total float64) (*models.PurchaseOrder, error) {
 	purchaseOrder := &models.PurchaseOrder{
-		SellerID:      dto.SellerID,
-		CustomerID:    dto.CustomerID,
-		ResponsibleID: dto.ResponsibleID,
+		SellerID:      nil,
+		CustomerID:    nil,
+		ResponsibleID: nil,
 		DateTime:      time.Now(),
 		SubTotal:      subtotal,
 		Total:         total,
@@ -179,32 +179,6 @@ func (r *PurchaseOrderRepository) CreatePurchaseOrder(dto *dtos.CreatePurchaseOr
 		}
 
 		if err := tx.Create(purchaseOrderItem).Error; err != nil {
-			tx.Rollback()
-			return nil, err
-		}
-	}
-
-	// Registrar descuentos en la relación many-to-many
-	var discounts []models.DiscountType
-	if len(dto.Discounts) > 0 {
-		if err := tx.Where("id IN ?", dto.Discounts).Find(&discounts).Error; err != nil {
-			tx.Rollback()
-			return nil, err
-		}
-		if err := tx.Model(purchaseOrder).Association("Discounts").Append(discounts); err != nil {
-			tx.Rollback()
-			return nil, err
-		}
-	}
-
-	// Registrar impuestos en la relación many-to-many
-	var taxes []models.TaxType
-	if len(dto.Taxes) > 0 {
-		if err := tx.Where("id IN ?", dto.Taxes).Find(&taxes).Error; err != nil {
-			tx.Rollback()
-			return nil, err
-		}
-		if err := tx.Model(purchaseOrder).Association("Taxes").Append(taxes); err != nil {
 			tx.Rollback()
 			return nil, err
 		}

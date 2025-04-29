@@ -38,10 +38,15 @@ func NewApprovedState(context *OrderStateMachine) *ApprovedState {
 
 	dto := &dtos.CreateInvoiceDTO{
 		EnterpriseData: config.ENTERPRISE_INVOICE_DATA, // Se deja vacío por ahora
-		CustomerID:     po.CustomerID,
-		Items:          billingItems,
-		Discounts:      discountIDs,
-		Taxes:          taxIDs,
+		CustomerID: func() int { // Usamos una función anónima para manejar el puntero
+			if po.CustomerID != nil {
+				return *po.CustomerID // Desreferenciamos el puntero
+			}
+			return 0 // Valor por defecto en caso de que sea nil
+		}(),
+		Items:     billingItems,
+		Discounts: discountIDs,
+		Taxes:     taxIDs,
 	}
 
 	// Crear la factura usando el repositorio
