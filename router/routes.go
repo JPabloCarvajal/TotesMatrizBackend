@@ -185,3 +185,6 @@ func RegisterExternalSaleRoutes(router *gin.Engine, controller *controllers.Exte
 	router.GET("/external-sales", controller.GetAllExternalSales)
 	router.POST("/external-sales", controller.CreateExternalSale)
 }
+func RegisterSalesReportRoutes(router *gin.Engine, controller *controllers.SalesReportController) {
+	router.GET("/sales-report/invoices", controller.GetInvoicesBetweenDates)
+}

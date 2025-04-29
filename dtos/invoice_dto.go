@@ -2,6 +2,7 @@ package dtos
 
 import (
 	"time"
+	"totesbackend/models"
 )
 
 type GetInvoiceDTO struct {
@@ -14,6 +15,16 @@ type GetInvoiceDTO struct {
 	Items          []BillingItemDTO `json:"items"`
 	Discounts      []int            `json:"discounts"`
 	Taxes          []int            `json:"taxes"`
+}
+
+type SalesReportInvoiceDTO struct {
+	ID        int                   `json:"id"`
+	DateTime  time.Time             `json:"date_time"`
+	Total     float64               `json:"total"`
+	Subtotal  float64               `json:"subtotal"`
+	Items     []BillingItemDTO      `json:"items"`
+	Discounts []models.DiscountType `json:"discounts"`
+	Taxes     []models.TaxType      `json:"taxes"`
 }
 
 type CreateInvoiceDTO struct {

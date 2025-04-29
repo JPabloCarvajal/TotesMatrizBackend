@@ -75,6 +75,7 @@ func SetupAndRunApp() error {
 	setUpBillingRouter()
 	setUpInvoice()
 	setUpExternalSaleRouter()
+	setUpSalesReportRouter()
 	router.Run("localhost:8080")
 
 	return nil
@@ -261,4 +262,11 @@ func setUpExternalSaleRouter() {
 	externalSaleService := services.NewExternalSaleService(externalSaleRepo, customerRepo)
 	externalSaleController := controllers.NewExternalSaleController(externalSaleService, authUtil, logUtil)
 	routes.RegisterExternalSaleRoutes(router, externalSaleController)
+}
+
+func setUpSalesReportRouter() {
+	invoiceRepo := repositories.NewInvoiceRepository(db)
+	salesReportService := services.NewSalesReportService(invoiceRepo)
+	salesReportController := controllers.NewSalesReportController(salesReportService, authUtil, logUtil)
+	routes.RegisterSalesReportRoutes(router, salesReportController)
 }

@@ -43,6 +43,20 @@ func (r *InvoiceRepository) GetAllInvoices() ([]models.Invoice, error) {
 	return invoices, nil
 }
 
+func (r *InvoiceRepository) GetInvoicesByDateRange(startDate, endDate time.Time) ([]models.Invoice, error) {
+	var invoices []models.Invoice
+	err := r.DB.Preload("Customer").
+		Preload("Items.Item").
+		Preload("Discounts").
+		Preload("Taxes").
+		Where("date_time BETWEEN ? AND ?", startDate, endDate).
+		Find(&invoices).Error
+	if err != nil {
+		return nil, errors.New("error retrieving invoices by date range")
+	}
+	return invoices, nil
+}
+
 func (r *InvoiceRepository) SearchInvoiceByID(query string) ([]models.Invoice, error) {
 	var invoices []models.Invoice
 	err := r.DB.Preload("Customer").Preload("Items.Item").Preload("Discounts").Preload("Taxes").

@@ -2,6 +2,7 @@ package dtos
 
 type GetExternalSaleDTO struct {
 	ID            int    `json:"id"`
+	Stock         int    `gorm:"not null" json:"stock"`
 	ReporterName  string `json:"reporter_name"`
 	ReporterID    string `json:"reporter_id"`
 	ItemID        int    `json:"item_id"`
@@ -13,6 +14,7 @@ type GetExternalSaleDTO struct {
 type CreateExternalSaleDTO struct {
 	ReporterName     string `json:"reporter_name" binding:"required"`
 	ReporterID       string `json:"reporter_id" binding:"required"`
+	Stock            int    `gorm:"not null" json:"stock"`
 	ItemID           int    `json:"item_id" binding:"required"`
 	CustomerName     string `json:"customerName" binding:"required"`
 	CustomerID       string `json:"customerId" binding:"required"`

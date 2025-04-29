@@ -51,6 +51,7 @@ func (esc *ExternalSaleController) GetExternalSaleByID(c *gin.Context) {
 		ItemName:      externalSale.Item.Name,
 		CustomerID:    externalSale.Customer.ID,
 		CustomerEmail: externalSale.Customer.Email,
+		Stock:         externalSale.Stock,
 	}
 
 	_ = esc.Log.RegisterLog(c, "Successfully fetched external sale with ID: "+id)
@@ -87,6 +88,7 @@ func (esc *ExternalSaleController) GetAllExternalSales(c *gin.Context) {
 			ItemName:      sale.Item.Name,
 			CustomerID:    sale.Customer.ID,
 			CustomerEmail: sale.Customer.Email,
+			Stock:         sale.Stock,
 		}
 
 		externalSalesDTO = append(externalSalesDTO, externalSaleDTO)
@@ -117,6 +119,7 @@ func (esc *ExternalSaleController) CreateExternalSale(c *gin.Context) {
 		ReporterName: dto.ReporterName,
 		ReporterID:   dto.ReporterID,
 		ItemID:       dto.ItemID,
+		Stock:        dto.Stock,
 		Customer: models.Customer{
 			CustomerName:     dto.CustomerName,
 			LastName:         dto.LastName,
@@ -144,6 +147,7 @@ func (esc *ExternalSaleController) CreateExternalSale(c *gin.Context) {
 		ItemID:        externalSaleWithID.ItemID,
 		CustomerID:    externalSaleWithID.CustomerID,
 		CustomerEmail: externalSaleWithID.Customer.Email,
+		Stock:         externalSaleWithID.Stock,
 	}
 
 	_ = esc.Log.RegisterLog(c, "Successfully created external sale with ID: "+strconv.Itoa(dtoResponse.ID))
