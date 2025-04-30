@@ -21,6 +21,7 @@ var authUtil *utilities.AuthorizationUtil
 var logUtil *utilities.LogUtil
 
 func SetupAndRunApp() error {
+
 	// load env
 	err := config.LoadENV()
 	if err != nil {
@@ -76,7 +77,11 @@ func SetupAndRunApp() error {
 	setUpInvoice()
 	setUpExternalSaleRouter()
 	setUpSalesReportRouter()
-	router.Run("localhost:8080")
+
+	err = router.RunTLS(":443", "certs/cert.pem", "certs/key.pem")
+	if err != nil {
+		panic(err)
+	}
 
 	return nil
 }
