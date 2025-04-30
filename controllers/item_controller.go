@@ -64,13 +64,6 @@ func (ic *ItemController) GetItemByID(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error registering log"})
 		return
 	}
-
-	permissionId := config.PERMISSION_GET_ITEM_BY_ID
-	if !ic.Auth.CheckPermission(c, permissionId) {
-		_ = ic.Log.RegisterLog(c, "Access denied for GetItemByID")
-		return
-	}
-
 	item, err := ic.Service.GetItemByID(id)
 	if err != nil {
 		_ = ic.Log.RegisterLog(c, "Item not found with ID: "+id)
@@ -102,12 +95,6 @@ func (ic *ItemController) GetItemByID(c *gin.Context) {
 func (ic *ItemController) GetAllItems(c *gin.Context) {
 	if ic.Log.RegisterLog(c, "Fetching all items") != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error registering log"})
-		return
-	}
-
-	permissionId := config.PERMISSION_GET_ALL_ITEMS
-	if !ic.Auth.CheckPermission(c, permissionId) {
-		_ = ic.Log.RegisterLog(c, "Access denied for GetAllItems")
 		return
 	}
 

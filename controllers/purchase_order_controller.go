@@ -25,16 +25,8 @@ func NewPurchaseOrderController(service *services.PurchaseOrderService, auth *ut
 
 func (poc *PurchaseOrderController) GetPurchaseOrderByID(c *gin.Context) {
 
-	permissionId := config.PERMISSION_GET_PURCHASE_ORDER_BY_ID
-
 	if err := poc.Log.RegisterLog(c, "Attempting to retrieve Purchase Order by ID"); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error registering log"})
-		return
-	}
-
-	if !poc.Auth.CheckPermission(c, permissionId) {
-		_ = poc.Log.RegisterLog(c, "Permission denied for GetPurchaseOrderByID")
-		c.JSON(http.StatusForbidden, gin.H{"error": "Permission denied"})
 		return
 	}
 

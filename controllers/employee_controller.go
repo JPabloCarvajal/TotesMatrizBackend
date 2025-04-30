@@ -3,9 +3,11 @@ package controllers
 import (
 	"errors"
 	"net/http"
+	"strconv"
 	"totesbackend/config"
 	"totesbackend/controllers/utilities"
 	"totesbackend/dtos"
+	"totesbackend/models"
 	"totesbackend/services"
 
 	"github.com/gin-gonic/gin"
@@ -200,44 +202,67 @@ func (ec *EmployeeController) SearchEmployeesByName(c *gin.Context) {
 func (ec *EmployeeController) CreateEmployee(c *gin.Context) {
 	permissionId := config.PERMISSION_CREATE_EMPLOYEE
 
-	// Log de intento
-	if err := ec.Log.RegisterLog(c, "Attempting to access CreateEmployee"); err != nil {
+	if ec.Log.RegisterLog(c, "Attempting to create an employee") != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error registering log"})
 		return
 	}
 
-	// Verificar permiso
 	if !ec.Auth.CheckPermission(c, permissionId) {
 		_ = ec.Log.RegisterLog(c, "Permission denied for CreateEmployee")
 		c.JSON(http.StatusForbidden, gin.H{"error": "Permission denied"})
 		return
 	}
 
-	// Obtener empleados
-	employees, err := ec.Service.GetAllEmployees()
-	if err != nil {
-		_ = ec.Log.RegisterLog(c, "Error retrieving employees: "+err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving employees"})
+	var dto dtos.CreateEmployeeDTO
+	if err := c.ShouldBindJSON(&dto); err != nil {
+		_ = ec.Log.RegisterLog(c, "Invalid JSON format: "+err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format", "details": err.Error()})
 		return
 	}
 
-	// Construir respuesta DTO
-	var employeesDTO []dtos.GetEmployeeDTO
-	for _, employee := range employees {
-		employeesDTO = append(employeesDTO, dtos.GetEmployeeDTO{
-			ID:               employee.ID,
-			Names:            employee.Names,
-			LastNames:        employee.LastNames,
-			PersonalID:       employee.PersonalID,
-			Address:          employee.Address,
-			PhoneNumbers:     employee.PhoneNumbers,
-			UserID:           employee.UserID,
-			IdentifierTypeID: employee.IdentifierTypeID,
-		})
+	existingEmployee, _ := ec.Service.GetEmployeeByID(dto.PersonalID)
+	if existingEmployee != nil {
+		_ = ec.Log.RegisterLog(c, "Attempt to create duplicate employee with PersonalID: "+dto.PersonalID)
+		c.JSON(http.StatusConflict, gin.H{"error": "An employee with this Personal ID already exists"})
+		return
 	}
 
-	_ = ec.Log.RegisterLog(c, "Employees retrieved successfully in CreateEmployee")
-	c.JSON(http.StatusOK, employeesDTO)
+	if dto.UserID <= 0 || dto.IdentifierTypeID <= 0 {
+		_ = ec.Log.RegisterLog(c, "Invalid UserID or IdentifierTypeID: UserID="+strconv.Itoa(dto.UserID)+", IdentifierTypeID="+strconv.Itoa(dto.IdentifierTypeID))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User ID or Identifier Type ID"})
+		return
+	}
+
+	employee := &models.Employee{
+		Names:            dto.Names,
+		LastNames:        dto.LastNames,
+		PersonalID:       dto.PersonalID,
+		Address:          dto.Address,
+		PhoneNumbers:     dto.PhoneNumbers,
+		UserID:           dto.UserID,
+		IdentifierTypeID: dto.IdentifierTypeID,
+	}
+
+	createdEmployee, err := ec.Service.CreateEmployee(employee)
+	if err != nil {
+		_ = ec.Log.RegisterLog(c, "Error creating employee: "+err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating employee", "details": err.Error()})
+		return
+	}
+
+	employeeDTO := dtos.GetEmployeeDTO{
+		ID:               createdEmployee.ID,
+		Names:            createdEmployee.Names,
+		LastNames:        createdEmployee.LastNames,
+		PersonalID:       createdEmployee.PersonalID,
+		Address:          createdEmployee.Address,
+		PhoneNumbers:     createdEmployee.PhoneNumbers,
+		UserID:           createdEmployee.UserID,
+		IdentifierTypeID: createdEmployee.IdentifierTypeID,
+	}
+
+	_ = ec.Log.RegisterLog(c, "Successfully created employee with PersonalID: "+createdEmployee.PersonalID)
+	c.JSON(http.StatusCreated, employeeDTO)
 }
 
 func (ec *EmployeeController) UpdateEmployee(c *gin.Context) {
