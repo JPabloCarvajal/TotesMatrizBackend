@@ -55,15 +55,17 @@ func (r *EmployeeRepository) GetAllEmployees() ([]models.Employee, error) {
 }
 
 func (r *EmployeeRepository) UpdateEmployee(employee *models.Employee) error {
-	var existingEmployee models.Employee
-	if err := r.DB.Preload("User").Preload("IdentifierType").First(&existingEmployee, "id = ?", employee.ID).Error; err != nil {
-		return err
-	}
-
-	if err := r.DB.Save(employee).Error; err != nil {
-		return err
-	}
-	return nil
+	return r.DB.Model(&models.Employee{}).
+		Where("id = ?", employee.ID).
+		Updates(map[string]interface{}{
+			"names":              employee.Names,
+			"last_names":         employee.LastNames,
+			"personal_id":        employee.PersonalID,
+			"address":            employee.Address,
+			"phone_numbers":      employee.PhoneNumbers,
+			"user_id":            employee.UserID,
+			"identifier_type_id": employee.IdentifierTypeID,
+		}).Error
 }
 
 func (r *EmployeeRepository) CreateEmployee(employee *models.Employee) (*models.Employee, error) {
