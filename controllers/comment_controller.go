@@ -61,14 +61,12 @@ func (cc *CommentController) GetCommentByID(c *gin.Context) {
 	_ = cc.Log.RegisterLog(c, "Successfully retrieved Comment with ID: "+idParam)
 
 	commentDTO := dtos.GetCommentDTO{
-		ID:             comment.ID,
-		Name:           comment.Name,
-		LastName:       comment.LastName,
-		Email:          comment.Email,
-		Phone:          comment.Phone,
-		ResidenceState: comment.ResidenceState,
-		ResidenceCity:  comment.ResidenceCity,
-		Comment:        comment.Comment,
+		ID:       comment.ID,
+		Name:     comment.Name,
+		LastName: comment.LastName,
+		Email:    comment.Email,
+		Phone:    comment.Phone,
+		Comment:  comment.Comment,
 	}
 
 	c.JSON(http.StatusOK, commentDTO)
@@ -96,14 +94,12 @@ func (cc *CommentController) GetAllComments(c *gin.Context) {
 	var commentsDTO []dtos.GetCommentDTO
 	for _, comment := range comments {
 		commentsDTO = append(commentsDTO, dtos.GetCommentDTO{
-			ID:             comment.ID,
-			Name:           comment.Name,
-			LastName:       comment.LastName,
-			Email:          comment.Email,
-			Phone:          comment.Phone,
-			ResidenceState: comment.ResidenceState,
-			ResidenceCity:  comment.ResidenceCity,
-			Comment:        comment.Comment,
+			ID:       comment.ID,
+			Name:     comment.Name,
+			LastName: comment.LastName,
+			Email:    comment.Email,
+			Phone:    comment.Phone,
+			Comment:  comment.Comment,
 		})
 	}
 
@@ -141,14 +137,12 @@ func (cc *CommentController) SearchCommentsByEmail(c *gin.Context) {
 	var commentsDTO []dtos.GetCommentDTO
 	for _, comment := range comments {
 		commentsDTO = append(commentsDTO, dtos.GetCommentDTO{
-			ID:             comment.ID,
-			Name:           comment.Name,
-			LastName:       comment.LastName,
-			Email:          comment.Email,
-			Phone:          comment.Phone,
-			ResidenceState: comment.ResidenceState,
-			ResidenceCity:  comment.ResidenceCity,
-			Comment:        comment.Comment,
+			ID:       comment.ID,
+			Name:     comment.Name,
+			LastName: comment.LastName,
+			Email:    comment.Email,
+			Phone:    comment.Phone,
+			Comment:  comment.Comment,
 		})
 	}
 
@@ -177,13 +171,11 @@ func (cc *CommentController) CreateComment(c *gin.Context) {
 	}
 
 	comment := models.Comment{
-		Name:           dto.Name,
-		LastName:       dto.LastName,
-		Email:          dto.Email,
-		Phone:          dto.Phone,
-		ResidenceState: dto.ResidenceState,
-		ResidenceCity:  dto.ResidenceCity,
-		Comment:        dto.Comment,
+		Name:     dto.Name,
+		LastName: dto.LastName,
+		Email:    dto.Email,
+		Phone:    dto.Phone,
+		Comment:  dto.Comment,
 	}
 
 	createdComment, err := cc.Service.CreateComment(comment)
@@ -194,14 +186,12 @@ func (cc *CommentController) CreateComment(c *gin.Context) {
 	}
 
 	commentDTO := dtos.GetCommentDTO{
-		ID:             createdComment.ID,
-		Name:           createdComment.Name,
-		LastName:       createdComment.LastName,
-		Email:          createdComment.Email,
-		Phone:          createdComment.Phone,
-		ResidenceState: createdComment.ResidenceState,
-		ResidenceCity:  createdComment.ResidenceCity,
-		Comment:        createdComment.Comment,
+		ID:       createdComment.ID,
+		Name:     createdComment.Name,
+		LastName: createdComment.LastName,
+		Email:    createdComment.Email,
+		Phone:    createdComment.Phone,
+		Comment:  createdComment.Comment,
 	}
 
 	_ = cc.Log.RegisterLog(c, "Successfully created comment with ID: "+strconv.Itoa(createdComment.ID))
@@ -246,8 +236,6 @@ func (cc *CommentController) UpdateComment(c *gin.Context) {
 	comment.LastName = dto.LastName
 	comment.Email = dto.Email
 	comment.Phone = dto.Phone
-	comment.ResidenceState = dto.ResidenceState
-	comment.ResidenceCity = dto.ResidenceCity
 	comment.Comment = dto.Comment
 
 	err = cc.Service.UpdateComment(comment)
@@ -260,14 +248,12 @@ func (cc *CommentController) UpdateComment(c *gin.Context) {
 	_ = cc.Log.RegisterLog(c, "Successfully updated comment with ID: "+strconv.Itoa(id))
 
 	updatedCommentDTO := dtos.GetCommentDTO{
-		ID:             comment.ID,
-		Name:           comment.Name,
-		LastName:       comment.LastName,
-		Email:          comment.Email,
-		Phone:          comment.Phone,
-		ResidenceState: comment.ResidenceState,
-		ResidenceCity:  comment.ResidenceCity,
-		Comment:        comment.Comment,
+		ID:       comment.ID,
+		Name:     comment.Name,
+		LastName: comment.LastName,
+		Email:    comment.Email,
+		Phone:    comment.Phone,
+		Comment:  comment.Comment,
 	}
 
 	c.JSON(http.StatusOK, updatedCommentDTO)
@@ -299,14 +285,12 @@ func (cc *CommentController) SearchCommentsByID(c *gin.Context) {
 	var commentsDTO []dtos.GetCommentDTO
 	for _, comment := range comments {
 		commentsDTO = append(commentsDTO, dtos.GetCommentDTO{
-			ID:             comment.ID,
-			Name:           comment.Name,
-			LastName:       comment.LastName,
-			Email:          comment.Email,
-			Phone:          comment.Phone,
-			ResidenceState: comment.ResidenceState,
-			ResidenceCity:  comment.ResidenceCity,
-			Comment:        comment.Comment,
+			ID:       comment.ID,
+			Name:     comment.Name,
+			LastName: comment.LastName,
+			Email:    comment.Email,
+			Phone:    comment.Phone,
+			Comment:  comment.Comment,
 		})
 	}
 
@@ -340,14 +324,12 @@ func (cc *CommentController) SearchCommentsByName(c *gin.Context) {
 	var commentsDTO []dtos.GetCommentDTO
 	for _, comment := range comments {
 		commentsDTO = append(commentsDTO, dtos.GetCommentDTO{
-			ID:             comment.ID,
-			Name:           comment.Name,
-			LastName:       comment.LastName,
-			Email:          comment.Email,
-			Phone:          comment.Phone,
-			ResidenceState: comment.ResidenceState,
-			ResidenceCity:  comment.ResidenceCity,
-			Comment:        comment.Comment,
+			ID:       comment.ID,
+			Name:     comment.Name,
+			LastName: comment.LastName,
+			Email:    comment.Email,
+			Phone:    comment.Phone,
+			Comment:  comment.Comment,
 		})
 	}
 

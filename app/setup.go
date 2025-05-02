@@ -46,7 +46,7 @@ func SetupAndRunApp() error {
 
 	// Configurar CORS
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "http://127.0.0.1:5503", "http://127.0.0.1:5500", "http://127.0.0.1:5501"}, // Especifica los orígenes permitidos
+		AllowOrigins:     []string{"http://localhost:3000", "http://127.0.0.1:5503", "http://127.0.0.1:5500", "http://127.0.0.1:5501", "https://192.168.88.131"}, // Especifica los orígenes permitidos
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "Username"},
 		AllowCredentials: true,
